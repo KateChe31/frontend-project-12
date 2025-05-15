@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
@@ -6,10 +5,9 @@ import './App.css';
 
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
+import PrivateRoute from './components/PrivateRoute';
 
 function HomePage() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
       <div>
@@ -21,17 +19,7 @@ function HomePage() {
         </a>
       </div>
       <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <p>Это заглушка. Позже тут будет чат.</p>
     </>
   );
 }
@@ -39,8 +27,20 @@ function HomePage() {
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      {/* Защищённая страница, доступ только с токеном */}
+      <Route
+        path="/"
+        element={
+          <PrivateRoute>
+            <HomePage />
+          </PrivateRoute>
+        }
+      />
+      
+      {/* Страница логина */}
       <Route path="/login" element={<LoginPage />} />
+      
+      {/* Страница 404 */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
