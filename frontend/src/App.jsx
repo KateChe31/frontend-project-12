@@ -1,28 +1,10 @@
 import { Routes, Route } from 'react-router-dom';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
 import './App.css';
 
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PrivateRoute from './components/PrivateRoute';
-
-function HomePage() {
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <p>Это заглушка. Позже тут будет чат.</p>
-    </>
-  );
-}
+import ChatPage from './pages/ChatPage'; // ⬅️ Импорт нового компонента
 
 function App() {
   return (
@@ -32,7 +14,7 @@ function App() {
         path="/"
         element={
           <PrivateRoute>
-            <HomePage />
+            <ChatPage /> {/* ⬅️ Тут была HomePage, теперь ChatPage */}
           </PrivateRoute>
         }
       />

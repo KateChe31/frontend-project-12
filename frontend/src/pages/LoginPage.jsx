@@ -43,22 +43,17 @@ const LoginPage = () => {
               <Form>
                 {/* Поле "Ваш ник" */}
                 <div className="form-floating mb-3 position-relative">
-                  <Field
-                    type="text"
-                    name="username"
-                    id="username"
-                    className={`form-control ${errorMessage ? 'is-invalid' : ''}`}
-                    placeholder=" "
-                    onChange={handleChange}
-                    value={values.username}
-                    required
-                  />
-                  <label htmlFor="username">Ваш ник</label>
-                  {errorMessage && (
-                    <div className="invalid-feedback position-absolute end-0 top-50 translate-middle-y me-3">
-                      <i className="bi bi-exclamation-circle-fill text-danger"></i>
-                    </div>
-                  )}
+                <Field
+                  type="text"
+                  name="username"
+                  id="username"
+                  className={`form-control ${errorMessage ? 'is-invalid' : ''}`}
+                  placeholder=" "
+                  onChange={handleChange}
+                  value={values.username}
+                  required
+                />
+                <label htmlFor="username">Ваш ник</label>
                 </div>
 
                 {/* Поле "Пароль" */}
@@ -74,11 +69,6 @@ const LoginPage = () => {
                     required
                   />
                   <label htmlFor="password">Пароль</label>
-                  {errorMessage && (
-                    <div className="invalid-feedback position-absolute end-0 top-50 translate-middle-y me-3">
-                      <i className="bi bi-exclamation-circle-fill text-danger"></i>
-                    </div>
-                  )}
                 </div>
 
                 {/* Сообщение об ошибке */}
