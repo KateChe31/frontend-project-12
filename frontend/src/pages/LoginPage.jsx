@@ -19,15 +19,16 @@ const LoginPage = () => {
         username: values.username,
         password: values.password,
       });
-
+  
       const { token } = response.data;
       localStorage.setItem('token', token);
-
+      localStorage.setItem('user', JSON.stringify({ username: values.username }));
+  
       navigate(from, { replace: true });
     } catch {
       setErrorMessage('Неверные имя пользователя или пароль');
     }    
-  };
+  };  
 
   return (
     <div className="container min-vh-100 d-flex justify-content-center align-items-center">
