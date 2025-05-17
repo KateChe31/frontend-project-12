@@ -72,6 +72,10 @@ const chatSlice = createSlice({
       const channel = state.channels.find(ch => ch.id === action.payload.id);
       if (channel) channel.name = action.payload.name;
     },
+    removeMessagesByChannel(state, action) {
+      const channelId = action.payload.channelId;
+      state.messages = state.messages.filter((msg) => msg.channelId !== channelId);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -97,7 +101,8 @@ export const {
   addMessage, 
   addChannel, 
   removeChannel, 
-  renameChannel 
+  renameChannel,
+  removeMessagesByChannel
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

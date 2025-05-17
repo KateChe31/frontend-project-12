@@ -7,13 +7,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "start-server -s ./frontend/dist",
     "dev": "npm run dev --prefix frontend",
-   "chat-server": "npx @hexlet/chat-server"
+    "chat-server": "npx @hexlet/chat-server"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@hexlet/chat-server": "^2.0.4",
     "axios": "^1.9.0",
-    "bootstrap": "^5.3.6"
+    "bootstrap": "^5.3.6",
+    "yup": "^1.6.1"
   }
 }
