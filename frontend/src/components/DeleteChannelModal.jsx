@@ -9,7 +9,7 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
     deleteButtonRef.current?.focus();
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
@@ -70,7 +70,7 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
         </form>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 

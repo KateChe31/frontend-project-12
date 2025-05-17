@@ -59,7 +59,7 @@ const ChannelsList = () => {
     setRenameModalChannel(channel);
   };
 
-  const handleRemoveConfirmed = async () => {
+  const handleRemoveConfirmed = async() => {
     if (!deleteModalChannel) return;
 
     setIsDeleting(true);
@@ -85,7 +85,7 @@ const ChannelsList = () => {
     }
   };
 
-  const handleRenameConfirmed = async (newName) => {
+  const handleRenameConfirmed = async(newName) => {
     if (!renameModalChannel) return;
 
     setIsRenaming(true);
@@ -100,7 +100,7 @@ const ChannelsList = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       dispatch(renameChannel({ id: renameModalChannel.id, name: newName }));
@@ -140,7 +140,7 @@ const ChannelsList = () => {
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  maxWidth: 'calc(100% - 50px)', // чтобы не наезжала на кнопку
+                  maxWidth: 'calc(100% - 50px)',
                 }}
                 title={channel.name}
               >
@@ -154,7 +154,7 @@ const ChannelsList = () => {
                     className="btn btn-sm btn-outline-secondary"
                     onClick={(e) => handleToggleMenu(e, channel.id)}
                     aria-label="Управление каналом"
-                    disabled={isBusy} // блокируем кнопку во время запроса
+                    disabled={isBusy}
                   >
                     ▼
                   </button>

@@ -12,6 +12,7 @@ import axios from 'axios';
 import socket from '../socket';
 import AddChannelModal from '../components/AddChannelModal';
 import ChannelsList from '../components/ChannelsList';
+import Header from '../components/Header';
 
 const ChatPage = () => {
   const dispatch = useDispatch();
@@ -32,10 +33,23 @@ const ChatPage = () => {
     dispatch(fetchChatData());
   }, [dispatch]);
 
-  // Установка фокуса на поле ввода при загрузке страницы
+  // Установка фокуса на поле ввода при загрузке страницы и при смене каналов
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    const tryFocus = () => {
+      if (
+        status === 'succeeded' &&
+        activeChannelId &&
+        inputRef.current &&
+        !inputRef.current.disabled
+      ) {
+        inputRef.current.focus();
+      } else {
+        setTimeout(tryFocus, 100);
+      }
+    };
+
+    tryFocus();
+  }, [status, activeChannelId, isConnected, isSending]);
 
   // Подключение к сокету и подписки
   useEffect(() => {
@@ -83,7 +97,7 @@ const ChatPage = () => {
     }
   }, [messages, activeChannelId]);
 
-  const handleSend = async (e) => {
+  const handleSend = async(e) => {
     e.preventDefault();
     const trimmed = newMessage.trim();
     if (!trimmed || !activeChannelId) return;
@@ -124,6 +138,7 @@ const ChatPage = () => {
 
   return (
     <div className="d-flex flex-column vh-100">
+      <Header />
       {!isConnected && (
         <div className="alert alert-warning text-center mb-0 rounded-0">
           Потеряно соединение с сервером. Повторное подключение...

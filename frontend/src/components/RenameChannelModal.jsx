@@ -27,7 +27,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
     };
   }, [onClose]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     const trimmedName = name.trim();
 
@@ -109,11 +109,11 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
             >
               Отменить
             </button>
-            </div>
+          </div>
         </form>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 

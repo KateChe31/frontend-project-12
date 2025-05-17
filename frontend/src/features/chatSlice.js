@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const fetchChatData = createAsyncThunk(
   'chat/fetchChatData',
-  async (_, { rejectWithValue }) => {
+  async(_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Требуется авторизация');
@@ -24,7 +24,7 @@ export const fetchChatData = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
     }
-  }
+  },
 );
 
 const addUsernameToMessage = (msg) => {
@@ -102,7 +102,7 @@ export const {
   addChannel, 
   removeChannel, 
   renameChannel,
-  removeMessagesByChannel
+  removeMessagesByChannel,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

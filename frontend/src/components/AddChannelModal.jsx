@@ -25,7 +25,7 @@ const AddChannelModal = ({ onClose }) => {
         .max(20, 'От 3 до 20 символов')
         .notOneOf(existingNames, 'Должно быть уникальным'),
     }),
-    onSubmit: async (values, { setSubmitting, setErrors }) => {
+    onSubmit: async(values, { setSubmitting, setErrors }) => {
       const token = localStorage.getItem('token');
 
       try {
@@ -93,7 +93,7 @@ const AddChannelModal = ({ onClose }) => {
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 
