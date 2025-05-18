@@ -61,11 +61,10 @@ const ChannelsList = () => {
     setRenameModalChannel(channel);
   };
 
-  const handleRemoveConfirmed = async() => {
+  const handleRemoveConfirmed = async () => {
     if (!deleteModalChannel) return;
 
     setIsDeleting(true);
-
     const channelIdToDelete = deleteModalChannel.id;
     const token = localStorage.getItem('token');
 
@@ -86,11 +85,10 @@ const ChannelsList = () => {
     }
   };
 
-  const handleRenameConfirmed = async(newName) => {
+  const handleRenameConfirmed = async (newName) => {
     if (!renameModalChannel) return;
 
     setIsRenaming(true);
-
     const token = localStorage.getItem('token');
 
     try {
@@ -98,9 +96,7 @@ const ChannelsList = () => {
         `/api/v1/channels/${renameModalChannel.id}`,
         { name: newName },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
 
@@ -121,74 +117,63 @@ const ChannelsList = () => {
       <ul className="list-group">
         {channels.map((channel) => {
           const isRemovable = channel.removable;
+          const isActive = channel.id === activeChannelId;
 
           return (
-            <li
-              key={channel.id}
-              className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center ${
-                channel.id === activeChannelId ? 'active' : ''
-              }`}
-              style={{
-                cursor: 'pointer',
-                position: 'relative',
-                zIndex: channel.id === activeChannelId ? 1 : 'auto',
-              }}
-              onClick={() => dispatch(setActiveChannel(channel.id))}
-            >
-              <span
-                style={{
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  maxWidth: 'calc(100% - 50px)',
-                }}
-                title={channel.name}
-              >
-                {t('channelsList.hashPrefix')} {channel.name}
-              </span>
+            <li key={channel.id} className="list-group-item p-0 border-0">
+              <div className="d-flex align-items-center justify-content-between">
+                <button
+                  type="button"
+                  className={`flex-grow-1 text-start btn ${isActive ? 'btn-secondary' : 'btn-light'}`}
+                  onClick={() => dispatch(setActiveChannel(channel.id))}
+                  aria-label={channel.name}
+                >
+                  {t('channelsList.hashPrefix')} {channel.name}
+                </button>
 
-              {isRemovable && (
-                <div style={{ position: 'relative' }}>
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-outline-secondary"
-                    onClick={(e) => handleToggleMenu(e, channel.id)}
-                    aria-label={t('channelsList.channelManagement')}
-                    disabled={isBusy}
-                  >
-                    ▼
-                  </button>
-
-                  {openMenuId === channel.id && (
-                    <ul
-                      ref={menuRef}
-                      className="list-group position-absolute shadow"
-                      style={{
-                        top: '100%',
-                        right: 0,
-                        zIndex: 1050,
-                        minWidth: '140px',
-                        backgroundColor: 'white',
-                      }}
+                {isRemovable && (
+                  <div className="position-relative ms-2">
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-outline-secondary"
+                      onClick={(e) => handleToggleMenu(e, channel.id)}
+                      aria-label={t('channelsList.channelManagement')}
+                      disabled={isBusy}
                     >
-                      <li
-                        className="list-group-item list-group-item-action text-danger"
-                        style={{ cursor: isBusy ? 'not-allowed' : 'pointer' }}
-                        onClick={(e) => !isBusy && handleDeleteClick(e, channel)}
+                      ▼
+                    </button>
+
+                    {openMenuId === channel.id && (
+                      <ul
+                        ref={menuRef}
+                        className="list-group position-absolute shadow"
+                        style={{
+                          top: '100%',
+                          right: 0,
+                          zIndex: 1050,
+                          minWidth: '140px',
+                          backgroundColor: 'white',
+                        }}
                       >
-                        {t('channelsList.delete')}
-                      </li>
-                      <li
-                        className="list-group-item list-group-item-action"
-                        style={{ cursor: isBusy ? 'not-allowed' : 'pointer' }}
-                        onClick={(e) => !isBusy && handleRenameClick(e, channel)}
-                      >
-                        {t('channelsList.rename')}
-                      </li>
-                    </ul>
-                  )}
-                </div>
-              )}
+                        <li
+                          className="list-group-item list-group-item-action text-danger"
+                          style={{ cursor: isBusy ? 'not-allowed' : 'pointer' }}
+                          onClick={(e) => !isBusy && handleDeleteClick(e, channel)}
+                        >
+                          {t('channelsList.delete')}
+                        </li>
+                        <li
+                          className="list-group-item list-group-item-action"
+                          style={{ cursor: isBusy ? 'not-allowed' : 'pointer' }}
+                          onClick={(e) => !isBusy && handleRenameClick(e, channel)}
+                        >
+                          {t('channelsList.rename')}
+                        </li>
+                      </ul>
+                    )}
+                  </div>
+                )}
+              </div>
             </li>
           );
         })}
