@@ -41,5 +41,5 @@ root.render(
         </Provider>
       </ErrorBoundary>
     </RollbarProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

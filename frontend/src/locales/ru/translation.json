@@ -5,6 +5,8 @@
   "channelNamePrefix": "# {{channelName}}",
   "messagePlaceholder": "Введите сообщение...",
   "sendMessage": "Отправить сообщение",
+  "addChannelButton": "+",
+
 
   "login": {
     "title": "Войти",
@@ -79,7 +81,7 @@
     "logout": "Выйти"
   },
 
-  "networkError": "Ошибка сети",
+  "networkError": "Ошибка соединения",
   "fetchError": "Ошибка загрузки данных",
   "channelAdded": "Канал создан",
   "channelRenamed": "Канал переименован",

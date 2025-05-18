@@ -167,7 +167,7 @@ const ChatPage = () => {
               title={t('addChannel')}
               disabled={isSending}
             >
-              +
+              {t('addChannelButton')}
             </button>
           </div>
 
