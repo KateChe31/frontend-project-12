@@ -107,6 +107,7 @@ const AddChannelModal = ({ onClose }) => {
                 value={formik.values.name}
                 ref={inputRef}
                 placeholder={t('modals.addChannel.placeholder')}
+                aria-label="Имя канала"
                 style={{ minWidth: 0 }}
               />
               {formik.touched.name && formik.errors.name && (
