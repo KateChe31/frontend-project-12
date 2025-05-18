@@ -81,7 +81,7 @@
 
   "networkError": "Ошибка сети",
   "fetchError": "Ошибка загрузки данных",
-  "channelAdded": "Канал успешно создан",
-  "channelRenamed": "Канал успешно переименован",
-  "channelDeleted": "Канал успешно удалён"
+  "channelAdded": "Канал создан",
+  "channelRenamed": "Канал переименован",
+  "channelDeleted": "Канал удалён"
 }
