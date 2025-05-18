@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
+import leoProfanity from 'leo-profanity';
 
 const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) => {
   const { t } = useTranslation();
@@ -44,13 +45,14 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
       return;
     }
 
+    const cleanedName = leoProfanity.clean(trimmedName);
+
     try {
       setIsSubmitting(true);
-      await onRename(trimmedName);
+      await onRename(cleanedName);
       onClose();
     } catch (err) {
       console.error('Ошибка при переименовании канала:', err);
-      // Ошибка больше не отображается пользователю
     } finally {
       setIsSubmitting(false);
     }

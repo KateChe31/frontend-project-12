@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'; 
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
@@ -14,8 +14,13 @@ import socket from '../socket';
 import AddChannelModal from '../components/AddChannelModal';
 import ChannelsList from '../components/ChannelsList';
 import Header from '../components/Header';
-
 import { toast } from 'react-toastify';
+import leoProfanity from 'leo-profanity';
+
+const dictionary = leoProfanity.getDictionary('en');
+const ruDictionary = leoProfanity.getDictionary('ru');
+leoProfanity.add(dictionary);
+leoProfanity.add(ruDictionary);
 
 const ChatPage = () => {
   const { t } = useTranslation();
@@ -65,8 +70,11 @@ const ChatPage = () => {
     });
 
     socket.on('newMessage', (message) => {
+      // Фильтрация сообщения перед добавлением
+      const cleanedBody = leoProfanity.clean(message.body);
       const patchedMessage = {
         ...message,
+        body: cleanedBody,
         username:
           !message.username || message.username === 'unknown'
             ? currentUsername || 'unknown'
@@ -112,9 +120,11 @@ const ChatPage = () => {
     const trimmed = newMessage.trim();
     if (!trimmed || !activeChannelId) return;
 
+    const filtered = leoProfanity.clean(trimmed);
+
     const token = localStorage.getItem('token');
     const messagePayload = {
-      body: trimmed,
+      body: filtered,
       channelId: activeChannelId,
     };
 

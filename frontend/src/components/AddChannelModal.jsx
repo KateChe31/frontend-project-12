@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import leoProfanity from 'leo-profanity';
 
 const AddChannelModal = ({ onClose }) => {
   const { t } = useTranslation();
@@ -32,10 +33,12 @@ const AddChannelModal = ({ onClose }) => {
     validateOnChange: false,
     onSubmit: async(values, { setSubmitting }) => {
       const token = localStorage.getItem('token');
+      const cleanedName = leoProfanity.clean(values.name);
+
       try {
         await axios.post(
           '/api/v1/channels',
-          { name: values.name },
+          { name: cleanedName },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -45,7 +48,6 @@ const AddChannelModal = ({ onClose }) => {
         onClose();
       } catch (err) {
         console.error('Ошибка при создании канала:', err);
-        // Ошибка createFailed удалена из UI
       } finally {
         setSubmitting(false);
       }
