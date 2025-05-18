@@ -1,21 +1,21 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Formik, Form, Field } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 import Header from '../components/Header';
 
 const SignupPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const [serverError, setServerError] = useState('');
   const usernameRef = useRef(null);
 
   useEffect(() => {
-    usernameRef.current?.focus(); // фокус на поле при загрузке
+    usernameRef.current?.focus();
   }, []);
 
   const handleSubmit = async(values, { setSubmitting, setFieldError }) => {
-    setServerError('');
     try {
       const response = await axios.post('/api/v1/signup', {
         username: values.username,
@@ -29,9 +29,7 @@ const SignupPage = () => {
       navigate('/');
     } catch (error) {
       if (error.response?.status === 409) {
-        setFieldError('username', 'Такой пользователь уже существует');
-      } else {
-        setServerError('Ошибка регистрации. Попробуйте позже.');
+        setFieldError('username', t('signup.errors.userExists'));
       }
     } finally {
       setSubmitting(false);
@@ -44,28 +42,28 @@ const SignupPage = () => {
       <div className="container min-vh-100 d-flex justify-content-center align-items-center">
         <div className="w-100 d-flex flex-column align-items-center">
           <div style={{ width: '100%', maxWidth: '500px' }}>
-            <h1 className="text-center mb-4">Регистрация</h1>
+            <h1 className="text-center mb-4">{t('signup.title')}</h1>
 
             <Formik
               initialValues={{ username: '', password: '', passwordConfirm: '' }}
               validateOnBlur={true}
               validateOnChange={false}
-              validate={values => {
+              validate={(values) => {
                 const errors = {};
                 if (!values.username) {
-                  errors.username = 'Обязательное поле';
+                  errors.username = t('signup.errors.required');
                 } else if (values.username.length < 3 || values.username.length > 20) {
-                  errors.username = 'От 3 до 20 символов';
+                  errors.username = t('signup.errors.usernameLength');
                 }
 
                 if (!values.password) {
-                  errors.password = 'Обязательное поле';
+                  errors.password = t('signup.errors.required');
                 } else if (values.password.length < 6) {
-                  errors.password = 'Не менее 6 символов';
+                  errors.password = t('signup.errors.passwordLength');
                 }
 
                 if (values.password !== values.passwordConfirm) {
-                  errors.passwordConfirm = 'Пароли должны совпадать';
+                  errors.passwordConfirm = t('signup.errors.passwordsMustMatch');
                 }
 
                 return errors;
@@ -74,7 +72,6 @@ const SignupPage = () => {
             >
               {({ errors, touched, isSubmitting, setFieldTouched }) => (
                 <Form>
-
                   {/* Имя пользователя */}
                   <div className="form-floating mb-3 position-relative">
                     <Field
@@ -86,7 +83,7 @@ const SignupPage = () => {
                       className={`form-control ${errors.username && touched.username ? 'is-invalid' : ''}`}
                       placeholder=" "
                     />
-                    <label htmlFor="username">Имя пользователя</label>
+                    <label htmlFor="username">{t('signup.username')}</label>
                     {errors.username && touched.username && (
                       <div className="invalid-feedback">{errors.username}</div>
                     )}
@@ -103,13 +100,13 @@ const SignupPage = () => {
                       placeholder=" "
                       onFocus={() => setFieldTouched('username', true)}
                     />
-                    <label htmlFor="password">Пароль</label>
+                    <label htmlFor="password">{t('signup.password')}</label>
                     {errors.password && touched.password && (
                       <div className="invalid-feedback">{errors.password}</div>
                     )}
                   </div>
 
-                  {/* Подтвердите пароль */}
+                  {/* Подтверждение пароля */}
                   <div className="form-floating mb-3 position-relative">
                     <Field
                       type="password"
@@ -122,26 +119,18 @@ const SignupPage = () => {
                         setFieldTouched('password', true);
                       }}
                     />
-                    <label htmlFor="passwordConfirm">Подтвердите пароль</label>
+                    <label htmlFor="passwordConfirm">{t('signup.passwordConfirm')}</label>
                     {errors.passwordConfirm && touched.passwordConfirm && (
                       <div className="invalid-feedback">{errors.passwordConfirm}</div>
                     )}
                   </div>
 
-                  {serverError && (
-                    <div className="text-danger mb-3">{serverError}</div>
-                  )}
-
                   <button type="submit" className="btn btn-primary w-100" disabled={isSubmitting}>
-                    Зарегистрироваться
+                    {t('signup.submit')}
                   </button>
                 </Form>
               )}
             </Formik>
-
-            <p className="text-center mt-3">
-              Уже зарегистрированы? <a href="/login">Войти</a>
-            </p>
           </div>
         </div>
       </div>

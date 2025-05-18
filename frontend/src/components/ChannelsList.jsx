@@ -10,8 +10,11 @@ import DeleteChannelModal from './DeleteChannelModal';
 import RenameChannelModal from './RenameChannelModal';
 import socket from '../socket';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const ChannelsList = () => {
+  const { t } = useTranslation();
+
   const channels = useSelector((state) => state.chat.channels);
   const activeChannelId = useSelector((state) => state.chat.activeChannelId);
   const dispatch = useDispatch();
@@ -25,14 +28,13 @@ const ChannelsList = () => {
 
   const menuRef = useRef(null);
 
-  // Закрытие меню при клике вне
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
         openMenuId !== null &&
         menuRef.current &&
         !menuRef.current.contains(event.target) &&
-        !event.target.closest('button[aria-label="Управление каналом"]')
+        !event.target.closest(`button[aria-label="${t('channelsList.channelManagement')}"]`)
       ) {
         setOpenMenuId(null);
       }
@@ -40,7 +42,7 @@ const ChannelsList = () => {
 
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  }, [openMenuId]);
+  }, [openMenuId, t]);
 
   const handleToggleMenu = (e, channelId) => {
     e.stopPropagation();
@@ -78,7 +80,6 @@ const ChannelsList = () => {
       socket.emit('removeChannel', { id: channelIdToDelete });
     } catch (err) {
       console.error('Ошибка при удалении канала:', err);
-      // Можно показать уведомление об ошибке
     } finally {
       setIsDeleting(false);
       setDeleteModalChannel(null);
@@ -107,7 +108,6 @@ const ChannelsList = () => {
       socket.emit('renameChannel', { id: renameModalChannel.id, name: newName });
     } catch (err) {
       console.error('Ошибка при переименовании канала:', err);
-      // Можно добавить уведомление или модалку с ошибкой
     } finally {
       setIsRenaming(false);
       setRenameModalChannel(null);
@@ -144,7 +144,7 @@ const ChannelsList = () => {
                 }}
                 title={channel.name}
               >
-                # {channel.name}
+                {t('channelsList.hashPrefix')} {channel.name}
               </span>
 
               {isRemovable && (
@@ -153,7 +153,7 @@ const ChannelsList = () => {
                     type="button"
                     className="btn btn-sm btn-outline-secondary"
                     onClick={(e) => handleToggleMenu(e, channel.id)}
-                    aria-label="Управление каналом"
+                    aria-label={t('channelsList.channelManagement')}
                     disabled={isBusy}
                   >
                     ▼
@@ -176,14 +176,14 @@ const ChannelsList = () => {
                         style={{ cursor: isBusy ? 'not-allowed' : 'pointer' }}
                         onClick={(e) => !isBusy && handleDeleteClick(e, channel)}
                       >
-                        Удалить
+                        {t('channelsList.delete')}
                       </li>
                       <li
                         className="list-group-item list-group-item-action"
                         style={{ cursor: isBusy ? 'not-allowed' : 'pointer' }}
                         onClick={(e) => !isBusy && handleRenameClick(e, channel)}
                       >
-                        Переименовать
+                        {t('channelsList.rename')}
                       </li>
                     </ul>
                   )}

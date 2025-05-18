@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Header = () => {
+  const { t } = useTranslation();
+
   const token = localStorage.getItem('token');
   const targetPath = token ? '/' : '/login';
   const navigate = useNavigate();
@@ -29,10 +32,9 @@ const Header = () => {
           onClick={handleHexletChatClick}
           style={{ flexGrow: 0 }}
         >
-          Hexlet Chat
+          {t('header.appName')}
         </Link>
 
-        {/* Чтобы ссылка была слева, а кнопка Выйти справа */}
         <div style={{ marginLeft: 'auto' }}>
           {token && (
             <button
@@ -40,7 +42,7 @@ const Header = () => {
               className="btn btn-outline-secondary btn-sm"
               onClick={handleLogout}
             >
-              Выйти
+              {t('header.logout')}
             </button>
           )}
         </div>

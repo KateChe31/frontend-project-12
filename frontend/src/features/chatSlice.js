@@ -6,7 +6,7 @@ export const fetchChatData = createAsyncThunk(
   async(_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      if (!token) throw new Error('Требуется авторизация');
+      if (!token) throw new Error('Authorization required');
 
       const [channelsRes, messagesRes] = await Promise.all([
         axios.get('/api/v1/channels', {

@@ -4,11 +4,14 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const AddChannelModal = ({ onClose }) => {
+  const { t } = useTranslation();
   const channels = useSelector((state) => state.chat.channels);
   const existingNames = channels.map((ch) => ch.name.toLowerCase());
   const inputRef = useRef(null);
+  const modalRef = useRef(null);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -20,30 +23,46 @@ const AddChannelModal = ({ onClose }) => {
     },
     validationSchema: Yup.object({
       name: Yup.string()
-        .required('Обязательное поле')
-        .min(3, 'От 3 до 20 символов')
-        .max(20, 'От 3 до 20 символов')
-        .notOneOf(existingNames, 'Должно быть уникальным'),
+        .required(t('modals.addChannel.errors.required'))
+        .min(3, t('modals.addChannel.errors.minMax'))
+        .max(20, t('modals.addChannel.errors.minMax'))
+        .notOneOf(existingNames, t('modals.addChannel.errors.unique')),
     }),
-    onSubmit: async(values, { setSubmitting, setErrors }) => {
+    validateOnBlur: true,
+    validateOnChange: false,
+    onSubmit: async(values, { setSubmitting }) => {
       const token = localStorage.getItem('token');
-
       try {
-        await axios.post('/api/v1/channels', { name: values.name }, {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        await axios.post(
+          '/api/v1/channels',
+          { name: values.name },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
-
+        );
         onClose();
       } catch (err) {
         console.error('Ошибка при создании канала:', err);
-        setErrors({ name: 'Не удалось создать канал. Попробуйте позже.' });
+        // Ошибка createFailed удалена из UI
       } finally {
         setSubmitting(false);
       }
     },
   });
+
+  const handleBackdropClick = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      formik.setTouched({}, false);
+      onClose();
+    }
+  };
+
+  const handleCancel = () => {
+    formik.setTouched({}, false);
+    onClose();
+  };
 
   return ReactDOM.createPortal(
     <div
@@ -52,29 +71,40 @@ const AddChannelModal = ({ onClose }) => {
       role="dialog"
       aria-modal="true"
       style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-      onClick={onClose}
+      onMouseDown={handleBackdropClick}
     >
       <div
         className="modal-dialog"
         role="document"
-        onClick={e => e.stopPropagation()}
+        ref={modalRef}
+        onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="modal-content">
           <form onSubmit={formik.handleSubmit}>
             <div className="modal-header">
-              <h5 className="modal-title">Добавить канал</h5>
-              <button type="button" className="btn-close" onClick={onClose} aria-label="Закрыть"></button>
+              <h5 className="modal-title">{t('modals.addChannel.title')}</h5>
+              <button
+                type="button"
+                className="btn-close"
+                onMouseDown={handleCancel}
+                aria-label="Закрыть"
+              ></button>
             </div>
-            <div className="modal-body" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
+            <div
+              className="modal-body"
+              style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
+            >
               <input
                 type="text"
                 name="name"
-                className={`form-control ${formik.touched.name && formik.errors.name ? 'is-invalid' : ''}`}
+                className={`form-control ${
+                  formik.touched.name && formik.errors.name ? 'is-invalid' : ''
+                }`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.name}
                 ref={inputRef}
-                placeholder="Имя канала"
+                placeholder={t('modals.addChannel.placeholder')}
                 style={{ minWidth: 0 }}
               />
               {formik.touched.name && formik.errors.name && (
@@ -82,11 +112,20 @@ const AddChannelModal = ({ onClose }) => {
               )}
             </div>
             <div className="modal-footer">
-              <button type="submit" className="btn btn-primary" disabled={formik.isSubmitting}>
-                Добавить
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={formik.isSubmitting}
+              >
+                {t('modals.addChannel.submit')}
               </button>
-              <button type="button" className="btn btn-secondary" onClick={onClose} disabled={formik.isSubmitting}>
-                Отменить
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onMouseDown={handleCancel}
+                disabled={formik.isSubmitting}
+              >
+                {t('modals.addChannel.cancel')}
               </button>
             </div>
           </form>

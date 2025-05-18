@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
 
 const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) => {
+  const { t } = useTranslation();
+
   const [name, setName] = useState(currentName);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,12 +35,12 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
     const trimmedName = name.trim();
 
     if (trimmedName.length < 3 || trimmedName.length > 20) {
-      setError('От 3 до 20 символов.');
+      setError(t('modals.renameChannel.errors.minMax'));
       return;
     }
 
     if (existingNames.includes(trimmedName) && trimmedName !== currentName) {
-      setError('Должно быть уникальным');
+      setError(t('modals.renameChannel.errors.unique'));
       return;
     }
 
@@ -47,7 +50,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
       onClose();
     } catch (err) {
       console.error('Ошибка при переименовании канала:', err);
-      setError('Не удалось переименовать канал. Попробуйте позже.');
+      // Ошибка больше не отображается пользователю
     } finally {
       setIsSubmitting(false);
     }
@@ -69,12 +72,12 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
       >
         <form className="modal-content" onSubmit={handleSubmit}>
           <div className="modal-header">
-            <h5 className="modal-title">Переименовать канал</h5>
+            <h5 className="modal-title">{t('modals.renameChannel.title')}</h5>
             <button
               type="button"
               className="btn-close"
               onClick={onClose}
-              aria-label="Закрыть"
+              aria-label={t('modals.renameChannel.cancel')}
               disabled={isSubmitting}
             />
           </div>
@@ -90,6 +93,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
               ref={inputRef}
               style={{ minWidth: 0 }}
               disabled={isSubmitting}
+              placeholder={t('modals.renameChannel.placeholder')}
             />
             {error && <div className="text-danger mt-2">{error}</div>}
           </div>
@@ -99,7 +103,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
               className="btn btn-primary"
               disabled={isSubmitting}
             >
-              Отправить
+              {t('modals.renameChannel.submit')}
             </button>
             <button
               type="button"
@@ -107,7 +111,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
               onClick={onClose}
               disabled={isSubmitting}
             >
-              Отменить
+              {t('modals.renameChannel.cancel')}
             </button>
           </div>
         </form>

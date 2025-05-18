@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react'; 
 import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
 
 const DeleteChannelModal = ({ onClose, onDelete }) => {
+  const { t } = useTranslation();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const deleteButtonRef = useRef(null);
 
@@ -16,8 +19,8 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
     try {
       await onDelete();
       onClose();
-    } catch (err) {
-      console.error('Ошибка при удалении канала:', err);
+    } catch {
+      console.error(t('modals.deleteChannel.deleteFailed', 'Ошибка при удалении канала'));
     } finally {
       setIsSubmitting(false);
     }
@@ -30,24 +33,29 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
       role="dialog"
       aria-modal="true"
       style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+      onClick={onClose}
     >
-      <div className="modal-dialog modal-dialog-centered" role="document" onClick={(e) => e.stopPropagation()}>
+      <div 
+        className="modal-dialog modal-dialog-centered" 
+        role="document" 
+        onClick={(e) => e.stopPropagation()}
+      >
         <form className="modal-content" onSubmit={handleSubmit}>
           <div className="modal-header">
-            <h5 className="modal-title">Удалить канал</h5>
+            <h5 className="modal-title">{t('modals.deleteChannel.title')}</h5>
             <button
               type="button"
               className="btn-close"
               onClick={onClose}
-              aria-label="Закрыть"
+              aria-label={t('modals.deleteChannel.cancel')}
               disabled={isSubmitting}
-            ></button>
+            />
           </div>
           <div
             className="modal-body"
             style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
           >
-            <p>Уверены?</p>
+            <p>{t('modals.deleteChannel.confirm')}</p>
           </div>
           <div className="modal-footer">
             <button
@@ -56,7 +64,7 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
               disabled={isSubmitting}
               ref={deleteButtonRef}
             >
-              Удалить
+              {t('modals.deleteChannel.submit')}
             </button>
             <button
               type="button"
@@ -64,7 +72,7 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
               onClick={onClose}
               disabled={isSubmitting}
             >
-              Отменить
+              {t('modals.deleteChannel.cancel')}
             </button>
           </div>
         </form>

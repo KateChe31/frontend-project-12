@@ -2,25 +2,23 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Formik, Form, Field } from 'formik';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
-
+import { useTranslation } from 'react-i18next'; // 💬 импорт i18n
 import Header from '../components/Header';
 
 const LoginPage = () => {
+  const { t } = useTranslation(); // 💬 хук перевода
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
   const from = location.state?.from?.pathname || '/';
-
   const usernameInputRef = useRef(null);
 
   useEffect(() => {
-    // Фокус при первой загрузке страницы
     if (usernameInputRef.current) {
       usernameInputRef.current.focus();
     }
 
-    // Подписка на кастомное событие для повторного фокуса
     const handleFocusEvent = () => {
       if (usernameInputRef.current) {
         usernameInputRef.current.focus();
@@ -47,7 +45,7 @@ const LoginPage = () => {
 
       navigate(from, { replace: true });
     } catch {
-      setErrorMessage('Неверные имя пользователя или пароль');
+      setErrorMessage(t('login.authError')); // 💬 текст ошибки через i18n
     }
   };
 
@@ -58,7 +56,7 @@ const LoginPage = () => {
       <div className="container flex-grow-1 d-flex justify-content-center align-items-center">
         <div className="w-100 d-flex flex-column align-items-center">
           <div style={{ width: '100%', maxWidth: '500px' }}>
-            <h1 className="text-center mb-4">Войти</h1>
+            <h1 className="text-center mb-4">{t('login.title')}</h1>
 
             <Formik
               initialValues={{ username: '', password: '' }}
@@ -82,7 +80,7 @@ const LoginPage = () => {
                         />
                       )}
                     </Field>
-                    <label htmlFor="username">Ваш ник</label>
+                    <label htmlFor="username">{t('login.username')}</label>
                   </div>
 
                   <div className="form-floating mb-3 position-relative">
@@ -96,7 +94,7 @@ const LoginPage = () => {
                       value={values.password}
                       required
                     />
-                    <label htmlFor="password">Пароль</label>
+                    <label htmlFor="password">{t('login.password')}</label>
                   </div>
 
                   {errorMessage && (
@@ -104,14 +102,14 @@ const LoginPage = () => {
                   )}
 
                   <button type="submit" className="btn btn-primary w-100">
-                    Войти
+                    {t('login.submit')}
                   </button>
                 </Form>
               )}
             </Formik>
 
             <p className="text-center mt-3">
-              Нет аккаунта? <Link to="/signup">Регистрация</Link>
+              {t('login.noAccount')} <Link to="/signup">{t('login.signup')}</Link>
             </p>
           </div>
         </div>

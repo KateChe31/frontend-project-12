@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react'; 
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   fetchChatData,
   setActiveChannel,
@@ -15,6 +16,7 @@ import ChannelsList from '../components/ChannelsList';
 import Header from '../components/Header';
 
 const ChatPage = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { channels, messages, activeChannelId, status, error } = useSelector((state) => state.chat);
 
@@ -28,12 +30,10 @@ const ChatPage = () => {
 
   const currentUsername = JSON.parse(localStorage.getItem('user'))?.username;
 
-  // Загрузка данных при первом монтировании
   useEffect(() => {
     dispatch(fetchChatData());
   }, [dispatch]);
 
-  // Установка фокуса на поле ввода при загрузке страницы и при смене каналов
   useEffect(() => {
     const tryFocus = () => {
       if (
@@ -51,7 +51,6 @@ const ChatPage = () => {
     tryFocus();
   }, [status, activeChannelId, isConnected, isSending]);
 
-  // Подключение к сокету и подписки
   useEffect(() => {
     socket.on('connect', () => setIsConnected(true));
     socket.on('disconnect', () => setIsConnected(false));
@@ -90,7 +89,6 @@ const ChatPage = () => {
     };
   }, [dispatch, currentUsername]);
 
-  // Автоскролл вниз при изменении сообщений или смене канала
   useEffect(() => {
     if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
@@ -119,18 +117,14 @@ const ChatPage = () => {
       inputRef.current?.focus();
     } catch (err) {
       console.error('Ошибка отправки сообщения:', err);
-      alert('Не удалось отправить сообщение. Проверьте соединение.');
+      alert(t('sendError'));
     } finally {
       setIsSending(false);
     }
   };
 
-  if (status === 'loading') {
-    return <p className="text-center mt-5">Загрузка...</p>;
-  }
-
   if (error) {
-    return <p className="text-danger text-center mt-5">Ошибка: {error}</p>;
+    return <p className="text-danger text-center mt-5">{error}</p>;
   }
 
   const activeMessages = messages.filter((msg) => msg.channelId === activeChannelId);
@@ -139,29 +133,17 @@ const ChatPage = () => {
   return (
     <div className="d-flex flex-column vh-100">
       <Header />
-      {!isConnected && (
-        <div className="alert alert-warning text-center mb-0 rounded-0">
-          Потеряно соединение с сервером. Повторное подключение...
-        </div>
-      )}
-
       <div className="d-flex flex-grow-1" style={{ minHeight: 0 }}>
-        {/* Список каналов */}
         <aside
           className="bg-light border-end p-3"
-          style={{
-            width: '300px',
-            minWidth: '300px',
-            maxWidth: '300px',
-            overflowY: 'auto',
-          }}
+          style={{ width: '300px', minWidth: '300px', maxWidth: '300px', overflowY: 'auto' }}
         >
           <div className="d-flex justify-content-between align-items-center mb-2">
-            <h5>Каналы</h5>
+            <h5>{t('channels')}</h5>
             <button
               className="btn btn-sm btn-outline-primary"
               onClick={() => setShowAddChannel(true)}
-              title="Добавить канал"
+              title={t('addChannel')}
               disabled={isSending}
             >
               +
@@ -171,31 +153,22 @@ const ChatPage = () => {
           <ChannelsList />
         </aside>
 
-        {/* Чат */}
         <main
           className="flex-grow-1 p-3 d-flex flex-column"
-          style={{
-            minWidth: 0,
-            flexBasis: 0,
-            overflow: 'hidden',
-          }}
+          style={{ minWidth: 0, flexBasis: 0, overflow: 'hidden' }}
         >
           <h5
             className="text-start text-truncate"
             style={{ maxWidth: '100%', overflow: 'hidden', whiteSpace: 'nowrap' }}
             title={activeChannel?.name || ''}
           >
-            # {activeChannel?.name || '...'}
+            {t('channelNamePrefix', { channelName: activeChannel?.name || '...' })}
           </h5>
 
           <div
             ref={messageListRef}
             className="border rounded p-3 mb-3 flex-grow-1 overflow-auto text-start"
-            style={{
-              minHeight: 0,
-              wordBreak: 'break-word',
-              whiteSpace: 'pre-wrap',
-            }}
+            style={{ minHeight: 0, wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}
           >
             {activeMessages.map((msg) => (
               <div key={msg.id} className="mb-2">
@@ -208,7 +181,7 @@ const ChatPage = () => {
             <input
               type="text"
               className="form-control"
-              placeholder="Введите сообщение..."
+              placeholder={t('messagePlaceholder')}
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               disabled={!isConnected || isSending}
@@ -220,7 +193,7 @@ const ChatPage = () => {
               className="btn btn-outline-secondary d-flex align-items-center justify-content-center"
               style={{ width: '40px', height: '40px' }}
               disabled={!newMessage.trim() || !isConnected || isSending}
-              aria-label="Отправить сообщение"
+              aria-label={t('sendMessage')}
             >
               <i className="bi bi-arrow-right"></i>
             </button>
@@ -228,7 +201,6 @@ const ChatPage = () => {
         </main>
       </div>
 
-      {/* Модалка добавления канала */}
       {showAddChannel && <AddChannelModal onClose={() => setShowAddChannel(false)} />}
     </div>
   );
