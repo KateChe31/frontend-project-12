@@ -5,7 +5,6 @@
   "channelNamePrefix": "# {{channelName}}",
   "messagePlaceholder": "Введите сообщение...",
   "sendMessage": "Отправить сообщение",
-  "sendError": "Не удалось отправить сообщение. Проверьте соединение.",
 
   "login": {
     "title": "Войти",
@@ -62,7 +61,7 @@
       "submit": "Отправить",
       "cancel": "Отменить",
       "errors": {
-        "minMax": "От 3 до 20 символов.",
+        "minMax": "От 3 до 20 символов",
         "unique": "Должно быть уникальным"
       }
     }
@@ -78,5 +77,11 @@
   "header": {
     "appName": "Hexlet Chat",
     "logout": "Выйти"
-  }
+  },
+
+  "networkError": "Ошибка сети",
+  "fetchError": "Ошибка загрузки данных",
+  "channelAdded": "Канал успешно создан",
+  "channelRenamed": "Канал успешно переименован",
+  "channelDeleted": "Канал успешно удалён"
 }

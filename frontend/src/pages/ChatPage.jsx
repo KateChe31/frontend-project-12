@@ -15,6 +15,8 @@ import AddChannelModal from '../components/AddChannelModal';
 import ChannelsList from '../components/ChannelsList';
 import Header from '../components/Header';
 
+import { toast } from 'react-toastify';
+
 const ChatPage = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -31,8 +33,12 @@ const ChatPage = () => {
   const currentUsername = JSON.parse(localStorage.getItem('user'))?.username;
 
   useEffect(() => {
-    dispatch(fetchChatData());
-  }, [dispatch]);
+    dispatch(fetchChatData())
+      .unwrap()
+      .catch(() => {
+        toast.error(t('fetchError'));
+      });
+  }, [dispatch, t]);
 
   useEffect(() => {
     const tryFocus = () => {
@@ -53,7 +59,10 @@ const ChatPage = () => {
 
   useEffect(() => {
     socket.on('connect', () => setIsConnected(true));
-    socket.on('disconnect', () => setIsConnected(false));
+    socket.on('disconnect', () => {
+      setIsConnected(false);
+      toast.error(t('networkError'));
+    });
 
     socket.on('newMessage', (message) => {
       const patchedMessage = {
@@ -69,14 +78,17 @@ const ChatPage = () => {
     socket.on('newChannel', (channel) => {
       dispatch(addChannel(channel));
       dispatch(setActiveChannel(channel.id));
+      toast.success(t('channelAdded'));
     });
 
     socket.on('removeChannel', ({ id }) => {
       dispatch(removeChannel({ id }));
+      toast.success(t('channelDeleted'));
     });
 
     socket.on('renameChannel', ({ id, name }) => {
       dispatch(renameChannel({ id, name }));
+      toast.success(t('channelRenamed'));
     });
 
     return () => {
@@ -87,7 +99,7 @@ const ChatPage = () => {
       socket.off('removeChannel');
       socket.off('renameChannel');
     };
-  }, [dispatch, currentUsername]);
+  }, [dispatch, currentUsername, t]);
 
   useEffect(() => {
     if (messageListRef.current) {
@@ -117,7 +129,6 @@ const ChatPage = () => {
       inputRef.current?.focus();
     } catch (err) {
       console.error('Ошибка отправки сообщения:', err);
-      alert(t('sendError'));
     } finally {
       setIsSending(false);
     }
