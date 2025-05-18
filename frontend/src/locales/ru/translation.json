@@ -76,6 +76,10 @@
     "rename": "Переименовать"
   },
 
+  "messageForm": {
+  "newMessage": "Новое сообщение"
+},
+
   "header": {
     "appName": "Hexlet Chat",
     "logout": "Выйти"
