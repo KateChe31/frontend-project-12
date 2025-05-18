@@ -7,7 +7,6 @@
   "sendMessage": "Отправить сообщение",
   "addChannelButton": "+",
 
-
   "login": {
     "title": "Войти",
     "username": "Ваш ник",
@@ -42,6 +41,7 @@
   "modals": {
     "addChannel": {
       "title": "Добавить канал",
+      "label": "Имя канала",
       "placeholder": "Имя канала",
       "submit": "Добавить",
       "cancel": "Отменить",
@@ -77,8 +77,8 @@
   },
 
   "messageForm": {
-  "newMessage": "Новое сообщение"
-},
+    "newMessage": "Новое сообщение"
+  },
 
   "header": {
     "appName": "Hexlet Chat",

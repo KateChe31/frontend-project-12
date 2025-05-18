@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react'; 
 import ReactDOM from 'react-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -96,7 +96,11 @@ const AddChannelModal = ({ onClose }) => {
               className="modal-body"
               style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
             >
+              <label htmlFor="channelName" className="form-label visually-hidden">
+                {t('modals.addChannel.label')}
+              </label>
               <input
+                id="channelName"
                 type="text"
                 name="name"
                 className={`form-control ${
@@ -107,7 +111,7 @@ const AddChannelModal = ({ onClose }) => {
                 value={formik.values.name}
                 ref={inputRef}
                 placeholder={t('modals.addChannel.placeholder')}
-                aria-label="Имя канала"
+                aria-label={t('modals.addChannel.label')}
                 style={{ minWidth: 0 }}
               />
               {formik.touched.name && formik.errors.name && (

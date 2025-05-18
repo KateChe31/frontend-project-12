@@ -61,7 +61,7 @@ const ChannelsList = () => {
     setRenameModalChannel(channel);
   };
 
-  const handleRemoveConfirmed = async () => {
+  const handleRemoveConfirmed = async() => {
     if (!deleteModalChannel) return;
 
     setIsDeleting(true);
@@ -85,7 +85,7 @@ const ChannelsList = () => {
     }
   };
 
-  const handleRenameConfirmed = async (newName) => {
+  const handleRenameConfirmed = async(newName) => {
     if (!renameModalChannel) return;
 
     setIsRenaming(true);
