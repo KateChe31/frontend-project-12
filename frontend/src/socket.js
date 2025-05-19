@@ -1,13 +1,11 @@
+// socket.js
 import { io } from 'socket.io-client';
 
-const createSocket = () => {
-  const token = localStorage.getItem('token');
-  const user = JSON.parse(localStorage.getItem('user'));
-
+export const createSocket = (token, username) => {
   return io('http://localhost:5001', {
-    auth: { 
+    auth: {
       token,
-      username: user?.username || 'unknown',
+      username,
     },
     reconnection: true,
     reconnectionAttempts: 10,
@@ -15,12 +13,3 @@ const createSocket = () => {
     transports: ['websocket'],
   });
 };
-
-const socket = createSocket();
-
-// Логирование всех событий для отладки
-socket.onAny((event, ...args) => {
-  console.log('[WebSocket Event]', event, args);
-});
-
-export default socket;

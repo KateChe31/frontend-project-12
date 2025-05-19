@@ -10,7 +10,7 @@ import {
   renameChannel,
 } from '../features/chatSlice';
 import axios from 'axios';
-import socket from '../socket';
+import { createSocket } from '../socket'; // <== исправлено
 import AddChannelModal from '../components/AddChannelModal';
 import ChannelsList from '../components/ChannelsList';
 import Header from '../components/Header';
@@ -28,14 +28,18 @@ const ChatPage = () => {
   const { channels, messages, activeChannelId, status, error } = useSelector((state) => state.chat);
 
   const [newMessage, setNewMessage] = useState('');
-  const [isConnected, setIsConnected] = useState(socket.connected);
+  const [isConnected, setIsConnected] = useState(false);
   const [showAddChannel, setShowAddChannel] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
   const messageListRef = useRef(null);
   const inputRef = useRef(null);
+  const socketRef = useRef(null);
 
-  const currentUsername = JSON.parse(localStorage.getItem('user'))?.username;
+  const user = JSON.parse(sessionStorage.getItem('user'));
+  const token = sessionStorage.getItem('token');
+
+  const currentUsername = user?.username || 'unknown';
 
   useEffect(() => {
     dispatch(fetchChatData())
@@ -63,6 +67,11 @@ const ChatPage = () => {
   }, [status, activeChannelId, isConnected, isSending]);
 
   useEffect(() => {
+    const socket = createSocket(token, currentUsername);
+    socketRef.current = socket;
+
+    setIsConnected(socket.connected);
+
     socket.on('connect', () => setIsConnected(true));
     socket.on('disconnect', () => {
       setIsConnected(false);
@@ -74,10 +83,6 @@ const ChatPage = () => {
       const patchedMessage = {
         ...message,
         body: cleanedBody,
-        username:
-          !message.username || message.username === 'unknown'
-            ? currentUsername || 'unknown'
-            : message.username,
       };
       dispatch(addMessage(patchedMessage));
     });
@@ -98,15 +103,15 @@ const ChatPage = () => {
       toast.success(t('channelRenamed'));
     });
 
+    // Debug log
+    socket.onAny((event, ...args) => {
+      console.log('[Socket Event]', event, args);
+    });
+
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
-      socket.off('newMessage');
-      socket.off('newChannel');
-      socket.off('removeChannel');
-      socket.off('renameChannel');
+      socket.disconnect();
     };
-  }, [dispatch, currentUsername, t]);
+  }, [dispatch, token, currentUsername, t]);
 
   useEffect(() => {
     if (messageListRef.current) {
@@ -121,10 +126,10 @@ const ChatPage = () => {
 
     const filtered = leoProfanity.clean(trimmed);
 
-    const token = localStorage.getItem('token');
     const messagePayload = {
       body: filtered,
       channelId: activeChannelId,
+      username: currentUsername, // ← добавляем имя пользователя
     };
 
     try {
@@ -154,10 +159,7 @@ const ChatPage = () => {
     <div className="d-flex flex-column vh-100">
       <Header />
       <div className="d-flex flex-grow-1" style={{ minHeight: 0 }}>
-        <aside
-          className="bg-light border-end p-3"
-          style={{ width: '300px', minWidth: '300px', maxWidth: '300px', overflowY: 'auto' }}
-        >
+        <aside className="bg-light border-end p-3" style={{ width: '300px', overflowY: 'auto' }}>
           <div className="d-flex justify-content-between align-items-center mb-2">
             <h5>{t('channels')}</h5>
             <button
@@ -169,26 +171,18 @@ const ChatPage = () => {
               {t('addChannelButton')}
             </button>
           </div>
-
           <ChannelsList />
         </aside>
 
-        <main
-          className="flex-grow-1 p-3 d-flex flex-column"
-          style={{ minWidth: 0, flexBasis: 0, overflow: 'hidden' }}
-        >
-          <h5
-            className="text-start text-truncate"
-            style={{ maxWidth: '100%', overflow: 'hidden', whiteSpace: 'nowrap' }}
-            title={activeChannel?.name || ''}
-          >
+        <main className="flex-grow-1 p-3 d-flex flex-column" style={{ overflow: 'hidden' }}>
+          <h5 className="text-start text-truncate" title={activeChannel?.name || ''}>
             {t('channelNamePrefix', { channelName: activeChannel?.name || '...' })}
           </h5>
 
           <div
             ref={messageListRef}
             className="border rounded p-3 mb-3 flex-grow-1 overflow-auto text-start"
-            style={{ minHeight: 0, wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}
+            style={{ whiteSpace: 'pre-wrap' }}
           >
             {activeMessages.map((msg) => (
               <div key={msg.id} className="mb-2">
@@ -202,7 +196,6 @@ const ChatPage = () => {
               type="text"
               className="form-control"
               placeholder={t('messagePlaceholder')}
-              aria-label={t('messageForm.newMessage')}
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               disabled={!isConnected || isSending}
@@ -211,8 +204,7 @@ const ChatPage = () => {
             />
             <button
               type="submit"
-              className="btn btn-outline-secondary d-flex align-items-center justify-content-center"
-              style={{ width: '40px', height: '40px' }}
+              className="btn btn-outline-secondary"
               disabled={!newMessage.trim() || !isConnected || isSending}
               aria-label={t('sendMessage')}
             >

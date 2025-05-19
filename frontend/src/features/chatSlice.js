@@ -5,7 +5,7 @@ export const fetchChatData = createAsyncThunk(
   'chat/fetchChatData',
   async(_, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       if (!token) throw new Error('Authorization required');
 
       const [channelsRes, messagesRes] = await Promise.all([
@@ -32,7 +32,7 @@ const addUsernameToMessage = (msg) => {
     return msg;
   }
 
-  const currentUser = JSON.parse(localStorage.getItem('user'));
+  const currentUser = JSON.parse(sessionStorage.getItem('user'));
 
   return {
     ...msg,

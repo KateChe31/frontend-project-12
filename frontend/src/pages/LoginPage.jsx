@@ -2,11 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Formik, Form, Field } from 'formik';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { useTranslation } from 'react-i18next'; // 💬 импорт i18n
+import { useTranslation } from 'react-i18next';
 import Header from '../components/Header';
 
 const LoginPage = () => {
-  const { t } = useTranslation(); // 💬 хук перевода
+  const { t } = useTranslation();
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,12 +40,14 @@ const LoginPage = () => {
       });
 
       const { token } = response.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify({ username: values.username }));
+
+      // ✅ Используем sessionStorage
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('user', JSON.stringify({ username: values.username }));
 
       navigate(from, { replace: true });
     } catch {
-      setErrorMessage(t('login.authError')); // 💬 текст ошибки через i18n
+      setErrorMessage(t('login.authError'));
     }
   };
 

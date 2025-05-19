@@ -8,7 +8,6 @@ import {
 } from '../features/chatSlice';
 import DeleteChannelModal from './DeleteChannelModal';
 import RenameChannelModal from './RenameChannelModal';
-import socket from '../socket';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 
@@ -66,7 +65,7 @@ const ChannelsList = () => {
 
     setIsDeleting(true);
     const channelIdToDelete = deleteModalChannel.id;
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
 
     try {
       await axios.delete(`/api/v1/channels/${channelIdToDelete}`, {
@@ -75,8 +74,6 @@ const ChannelsList = () => {
 
       dispatch(removeChannel({ id: channelIdToDelete }));
       dispatch(removeMessagesByChannel({ channelId: channelIdToDelete }));
-
-      socket.emit('removeChannel', { id: channelIdToDelete });
     } catch (err) {
       console.error('Ошибка при удалении канала:', err);
     } finally {
@@ -89,7 +86,7 @@ const ChannelsList = () => {
     if (!renameModalChannel) return;
 
     setIsRenaming(true);
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
 
     try {
       await axios.patch(
@@ -101,7 +98,6 @@ const ChannelsList = () => {
       );
 
       dispatch(renameChannel({ id: renameModalChannel.id, name: newName }));
-      socket.emit('renameChannel', { id: renameModalChannel.id, name: newName });
     } catch (err) {
       console.error('Ошибка при переименовании канала:', err);
     } finally {
