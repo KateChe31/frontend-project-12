@@ -87,6 +87,9 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
             className="modal-body"
             style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
           >
+            <label htmlFor="channel-name-input" className="visually-hidden">
+              {t('modals.renameChannel.label')}
+            </label>
             <input
               type="text"
               className="form-control"
