@@ -196,6 +196,7 @@ const ChatPage = () => {
               type="text"
               className="form-control"
               placeholder={t('messagePlaceholder')}
+              aria-label={t('messageForm.newMessage')}
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               disabled={!isConnected || isSending}

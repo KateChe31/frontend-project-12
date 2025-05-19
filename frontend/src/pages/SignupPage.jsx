@@ -23,8 +23,8 @@ const SignupPage = () => {
       });
 
       const { token } = response.data;
-   sessionStorage.setItem('token', token);
-sessionStorage.setItem('user', JSON.stringify({ username: values.username }));
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('user', JSON.stringify({ username: values.username }));
 
 
       navigate('/');
