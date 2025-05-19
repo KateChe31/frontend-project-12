@@ -91,6 +91,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
               {t('modals.renameChannel.label')}
             </label>
             <input
+              id="channel-name-input"
               type="text"
               className="form-control"
               value={name}
