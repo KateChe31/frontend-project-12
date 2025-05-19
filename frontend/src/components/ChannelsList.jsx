@@ -137,10 +137,10 @@ const ChannelsList = () => {
                       type="button"
                       className="btn btn-sm btn-outline-secondary"
                       onClick={(e) => handleToggleMenu(e, channel.id)}
-                      aria-label={t('channelsList.channelManagement')}
                       disabled={isBusy}
                     >
                       ▼
+                      <span className="visually-hidden">{t('channelsList.channelManagement')}</span>
                     </button>
 
                     {openMenuId === channel.id && (
