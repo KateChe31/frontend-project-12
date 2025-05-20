@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'; 
+import { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -12,7 +12,7 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
     deleteButtonRef.current?.focus();
   }, []);
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
@@ -35,10 +35,10 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
       style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       onClick={onClose}
     >
-      <div 
-        className="modal-dialog modal-dialog-centered" 
-        role="document" 
-        onClick={(e) => e.stopPropagation()}
+      <div
+        className="modal-dialog modal-dialog-centered"
+        role="document"
+        onClick={e => e.stopPropagation()}
       >
         <form className="modal-content" onSubmit={handleSubmit}>
           <div className="modal-header">

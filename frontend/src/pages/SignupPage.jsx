@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { Formik, Form, Field } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -15,7 +15,7 @@ const SignupPage = () => {
     usernameRef.current?.focus();
   }, []);
 
-  const handleSubmit = async(values, { setSubmitting, setFieldError }) => {
+  const handleSubmit = async (values, { setSubmitting, setFieldError }) => {
     try {
       const response = await axios.post('/api/v1/signup', {
         username: values.username,
@@ -25,7 +25,6 @@ const SignupPage = () => {
       const { token } = response.data;
       sessionStorage.setItem('token', token);
       sessionStorage.setItem('user', JSON.stringify({ username: values.username }));
-
 
       navigate('/');
     } catch (error) {

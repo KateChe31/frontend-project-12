@@ -3,6 +3,7 @@ import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 
+
 export default [
   { ignores: ['dist', 'node_modules'] },
   {
@@ -28,13 +29,13 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
-      'brace-style': ['error', '1tbs'],
+      'brace-style': ['error', '1tbs', { allowSingleLine: false }],
       'comma-dangle': ['error', 'always-multiline'],
       'semi': ['error', 'always'],
       'quotes': ['error', 'single'],
       'indent': ['error', 2],
       'no-multi-spaces': 'error',
-      'space-before-function-paren': ['error', 'never'],
+      'space-before-function-paren': 'off',
     },
   },
 ];

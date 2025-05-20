@@ -6,7 +6,7 @@ import translationRU from './locales/ru/translation.json';
 i18n
   .use(initReactI18next)
   .init({
-    lng: 'ru', 
+    lng: 'ru',
     fallbackLng: 'ru',
     resources: {
       ru: {

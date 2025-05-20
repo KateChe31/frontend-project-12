@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import leoProfanity from 'leo-profanity';
@@ -31,7 +31,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
     };
   }, [onClose]);
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const trimmedName = name.trim();
 
@@ -70,7 +70,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
       <div
         className="modal-dialog modal-dialog-centered"
         role="document"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e=> e.stopPropagation()}
       >
         <form className="modal-content" onSubmit={handleSubmit}>
           <div className="modal-header">
@@ -95,7 +95,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
               type="text"
               className="form-control"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={e => setName(e.target.value)}
               ref={inputRef}
               style={{ minWidth: 0 }}
               disabled={isSubmitting}

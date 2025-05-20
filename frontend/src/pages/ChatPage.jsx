@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
@@ -27,7 +27,7 @@ const DEFAULT_CHANNEL_NAME = 'general';
 const ChatPage = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { channels, messages, activeChannelId, status, error } = useSelector((state) => state.chat);
+  const { channels, messages, activeChannelId, status, error } = useSelector(state => state.chat);
 
   const [newMessage, setNewMessage] = useState('');
   const [isConnected, setIsConnected] = useState(false);
@@ -99,7 +99,7 @@ const ChatPage = () => {
       dispatch(removeChannel({ id }));
 
       if (id === activeChannelId) {
-        const generalChannel = channels.find((ch) => ch.name === DEFAULT_CHANNEL_NAME);
+        const generalChannel = channels.find(ch => ch.name === DEFAULT_CHANNEL_NAME);
         if (generalChannel) {
           dispatch(setActiveChannel(generalChannel.id));
         }
@@ -128,7 +128,7 @@ const ChatPage = () => {
     }
   }, [messages, activeChannelId]);
 
-  const handleSend = async(e) => {
+  const handleSend = async (e) => {
     e.preventDefault();
     const trimmed = newMessage.trim();
     if (!trimmed || !activeChannelId) return;
@@ -161,8 +161,8 @@ const ChatPage = () => {
     return <p className="text-danger text-center mt-5">{error}</p>;
   }
 
-  const activeMessages = messages.filter((msg) => msg.channelId === activeChannelId);
-  const activeChannel = channels.find((ch) => ch.id === activeChannelId);
+  const activeMessages = messages.filter(msg => msg.channelId === activeChannelId);
+  const activeChannel = channels.find(ch => ch.id === activeChannelId);
 
   return (
     <div className="d-flex flex-column vh-100">
@@ -193,9 +193,11 @@ const ChatPage = () => {
             className="border rounded p-3 mb-3 flex-grow-1 overflow-auto text-start"
             style={{ whiteSpace: 'pre-wrap' }}
           >
-            {activeMessages.map((msg) => (
+            {activeMessages.map(msg => (
               <div key={msg.id} className="mb-2">
-                <strong>{msg.username}</strong>: {msg.body}
+                <strong>{msg.username}</strong>
+                : 
+                {msg.body}
               </div>
             ))}
           </div>
@@ -207,7 +209,7 @@ const ChatPage = () => {
               placeholder={t('messagePlaceholder')}
               aria-label={t('messageForm.newMessage')}
               value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
+              onChange={e => setNewMessage(e.target.value)}
               disabled={!isConnected || isSending}
               ref={inputRef}
               autoComplete="off"

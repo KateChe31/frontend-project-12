@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const fetchChatData = createAsyncThunk(
   'chat/fetchChatData',
-  async(_, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const token = sessionStorage.getItem('token');
       if (!token) throw new Error('Authorization required');
@@ -74,7 +74,7 @@ const chatSlice = createSlice({
     },
     removeMessagesByChannel(state, action) {
       const channelId = action.payload.channelId;
-      state.messages = state.messages.filter((msg) => msg.channelId !== channelId);
+      state.messages = state.messages.filter(msg => msg.channelId !== channelId);
     },
   },
   extraReducers: (builder) => {
@@ -96,11 +96,11 @@ const chatSlice = createSlice({
   },
 });
 
-export const { 
-  setActiveChannel, 
-  addMessage, 
-  addChannel, 
-  removeChannel, 
+export const {
+  setActiveChannel,
+  addMessage,
+  addChannel,
+  removeChannel,
   renameChannel,
   removeMessagesByChannel,
 } = chatSlice.actions;

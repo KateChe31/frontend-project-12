@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Formik, Form, Field } from 'formik';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -32,7 +32,7 @@ const LoginPage = () => {
     };
   }, []);
 
-  const handleSubmit = async(values) => {
+  const handleSubmit = async (values) => {
     try {
       const response = await axios.post('/api/v1/login', {
         username: values.username,
@@ -41,7 +41,6 @@ const LoginPage = () => {
 
       const { token } = response.data;
 
-      // ✅ Используем sessionStorage
       sessionStorage.setItem('token', token);
       sessionStorage.setItem('user', JSON.stringify({ username: values.username }));
 
@@ -111,7 +110,8 @@ const LoginPage = () => {
             </Formik>
 
             <p className="text-center mt-3">
-              {t('login.noAccount')} <Link to="/signup">{t('login.signup')}</Link>
+              {t('login.noAccount')} 
+              <Link to="/signup">{t('login.signup')}</Link>
             </p>
           </div>
         </div>

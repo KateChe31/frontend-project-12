@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   setActiveChannel,
@@ -14,8 +14,8 @@ import { useTranslation } from 'react-i18next';
 const ChannelsList = () => {
   const { t } = useTranslation();
 
-  const channels = useSelector((state) => state.chat.channels);
-  const activeChannelId = useSelector((state) => state.chat.activeChannelId);
+  const channels = useSelector(state => state.chat.channels);
+  const activeChannelId = useSelector(state => state.chat.activeChannelId);
   const dispatch = useDispatch();
 
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -30,10 +30,10 @@ const ChannelsList = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        openMenuId !== null &&
-        menuRef.current &&
-        !menuRef.current.contains(event.target) &&
-        !event.target.closest(`button[aria-label="${t('channelsList.channelManagement')}"]`)
+        openMenuId !== null
+        && menuRef.current
+        && !menuRef.current.contains(event.target)
+        && !event.target.closest(`button[aria-label="${t('channelsList.channelManagement')}"]`)
       ) {
         setOpenMenuId(null);
       }
@@ -60,7 +60,7 @@ const ChannelsList = () => {
     setRenameModalChannel(channel);
   };
 
-  const handleRemoveConfirmed = async() => {
+  const handleRemoveConfirmed = async () => {
     if (!deleteModalChannel) return;
 
     setIsDeleting(true);
@@ -82,7 +82,7 @@ const ChannelsList = () => {
     }
   };
 
-  const handleRenameConfirmed = async(newName) => {
+  const handleRenameConfirmed = async (newName) => {
     if (!renameModalChannel) return;
 
     setIsRenaming(true);
@@ -124,7 +124,8 @@ const ChannelsList = () => {
                   onClick={() => dispatch(setActiveChannel(channel.id))}
                   aria-label={channel.name}
                 >
-                  {t('channelsList.hashPrefix')} {channel.name}
+                  {t('channelsList.hashPrefix')}
+                  {channel.name}
                 </button>
 
                 {isRemovable && (
@@ -132,7 +133,7 @@ const ChannelsList = () => {
                     <button
                       type="button"
                       className="btn btn-sm btn-outline-secondary"
-                      onClick={(e) => handleToggleMenu(e, channel.id)}
+                      onClick={e => handleToggleMenu(e, channel.id)}
                       disabled={isBusy}
                     >
                       ▼
@@ -154,14 +155,14 @@ const ChannelsList = () => {
                         <li
                           className="list-group-item list-group-item-action text-danger"
                           style={{ cursor: isBusy ? 'not-allowed' : 'pointer' }}
-                          onClick={(e) => !isBusy && handleDeleteClick(e, channel)}
+                          onClick={e => !isBusy && handleDeleteClick(e, channel)}
                         >
                           {t('channelsList.delete')}
                         </li>
                         <li
                           className="list-group-item list-group-item-action"
                           style={{ cursor: isBusy ? 'not-allowed' : 'pointer' }}
-                          onClick={(e) => !isBusy && handleRenameClick(e, channel)}
+                          onClick={e => !isBusy && handleRenameClick(e, channel)}
                         >
                           {t('channelsList.rename')}
                         </li>
@@ -187,7 +188,7 @@ const ChannelsList = () => {
       {renameModalChannel && (
         <RenameChannelModal
           currentName={renameModalChannel.name}
-          existingNames={channels.map((ch) => ch.name)}
+          existingNames={channels.map(ch => ch.name)}
           onClose={() => setRenameModalChannel(null)}
           onRename={handleRenameConfirmed}
           isLoading={isRenaming}

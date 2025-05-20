@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -9,8 +9,8 @@ import leoProfanity from 'leo-profanity';
 
 const AddChannelModal = ({ onClose, onChannelCreated }) => {
   const { t } = useTranslation();
-  const channels = useSelector((state) => state.chat.channels);
-  const existingNames = channels.map((ch) => ch.name.toLowerCase());
+  const channels = useSelector(state => state.chat.channels);
+  const existingNames = channels.map(ch => ch.name.toLowerCase());
   const inputRef = useRef(null);
   const modalRef = useRef(null);
 
@@ -31,7 +31,7 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
     }),
     validateOnBlur: true,
     validateOnChange: false,
-    onSubmit: async(values, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting }) => {
       const token = sessionStorage.getItem('token');
       const cleanedName = leoProfanity.clean(values.name);
 
@@ -47,7 +47,7 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
         );
 
         if (onChannelCreated) {
-          onChannelCreated(res.data.id); // ✅ пробрасываем ID нового канала
+          onChannelCreated(res.data.id);
         }
 
         onClose();
@@ -84,7 +84,7 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
         className="modal-dialog"
         role="document"
         ref={modalRef}
-        onMouseDown={(e) => e.stopPropagation()}
+        onMouseDown={e => e.stopPropagation()}
       >
         <div className="modal-content">
           <form onSubmit={formik.handleSubmit}>
@@ -95,7 +95,8 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
                 className="btn-close"
                 onMouseDown={handleCancel}
                 aria-label="Закрыть"
-              ></button>
+              >
+              </button>
             </div>
             <div
               className="modal-body"
