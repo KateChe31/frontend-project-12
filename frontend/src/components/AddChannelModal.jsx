@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'; 
+import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -7,8 +7,7 @@ import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import leoProfanity from 'leo-profanity';
 
-
-const AddChannelModal = ({ onClose }) => {
+const AddChannelModal = ({ onClose, onChannelCreated }) => {
   const { t } = useTranslation();
   const channels = useSelector((state) => state.chat.channels);
   const existingNames = channels.map((ch) => ch.name.toLowerCase());
@@ -37,7 +36,7 @@ const AddChannelModal = ({ onClose }) => {
       const cleanedName = leoProfanity.clean(values.name);
 
       try {
-        await axios.post(
+        const res = await axios.post(
           '/api/v1/channels',
           { name: cleanedName },
           {
@@ -46,6 +45,11 @@ const AddChannelModal = ({ onClose }) => {
             },
           },
         );
+
+        if (onChannelCreated) {
+          onChannelCreated(res.data.id); // ✅ пробрасываем ID нового канала
+        }
+
         onClose();
       } catch (err) {
         console.error('Ошибка при создании канала:', err);

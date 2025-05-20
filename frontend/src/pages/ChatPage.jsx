@@ -10,7 +10,7 @@ import {
   renameChannel,
 } from '../features/chatSlice';
 import axios from 'axios';
-import { createSocket } from '../socket'; // <== исправлено
+import { createSocket } from '../socket';
 import AddChannelModal from '../components/AddChannelModal';
 import ChannelsList from '../components/ChannelsList';
 import Header from '../components/Header';
@@ -22,6 +22,8 @@ const ruDictionary = leoProfanity.getDictionary('ru');
 leoProfanity.add(dictionary);
 leoProfanity.add(ruDictionary);
 
+const DEFAULT_CHANNEL_NAME = 'general';
+
 const ChatPage = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -32,13 +34,14 @@ const ChatPage = () => {
   const [showAddChannel, setShowAddChannel] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
+  const [createdChannelId, setCreatedChannelId] = useState(null);
+
   const messageListRef = useRef(null);
   const inputRef = useRef(null);
   const socketRef = useRef(null);
 
   const user = JSON.parse(sessionStorage.getItem('user'));
   const token = sessionStorage.getItem('token');
-
   const currentUsername = user?.username || 'unknown';
 
   useEffect(() => {
@@ -50,13 +53,15 @@ const ChatPage = () => {
   }, [dispatch, t]);
 
   useEffect(() => {
+    if (createdChannelId) {
+      dispatch(setActiveChannel(createdChannelId));
+      setCreatedChannelId(null);
+    }
+  }, [createdChannelId, dispatch]);
+
+  useEffect(() => {
     const tryFocus = () => {
-      if (
-        status === 'succeeded' &&
-        activeChannelId &&
-        inputRef.current &&
-        !inputRef.current.disabled
-      ) {
+      if (status === 'succeeded' && activeChannelId && inputRef.current && !inputRef.current.disabled) {
         inputRef.current.focus();
       } else {
         setTimeout(tryFocus, 100);
@@ -73,28 +78,33 @@ const ChatPage = () => {
     setIsConnected(socket.connected);
 
     socket.on('connect', () => setIsConnected(true));
-    socket.on('disconnect', () => {
-      setIsConnected(false);
+    socket.on('disconnect', () => setIsConnected(false));
+
+    socket.on('connect_error', () => {
       toast.error(t('networkError'));
     });
 
     socket.on('newMessage', (message) => {
       const cleanedBody = leoProfanity.clean(message.body);
-      const patchedMessage = {
-        ...message,
-        body: cleanedBody,
-      };
+      const patchedMessage = { ...message, body: cleanedBody };
       dispatch(addMessage(patchedMessage));
     });
 
     socket.on('newChannel', (channel) => {
       dispatch(addChannel(channel));
-      dispatch(setActiveChannel(channel.id));
       toast.success(t('channelAdded'));
     });
 
     socket.on('removeChannel', ({ id }) => {
       dispatch(removeChannel({ id }));
+
+      if (id === activeChannelId) {
+        const generalChannel = channels.find((ch) => ch.name === DEFAULT_CHANNEL_NAME);
+        if (generalChannel) {
+          dispatch(setActiveChannel(generalChannel.id));
+        }
+      }
+
       toast.success(t('channelDeleted'));
     });
 
@@ -103,7 +113,6 @@ const ChatPage = () => {
       toast.success(t('channelRenamed'));
     });
 
-    // Debug log
     socket.onAny((event, ...args) => {
       console.log('[Socket Event]', event, args);
     });
@@ -111,7 +120,7 @@ const ChatPage = () => {
     return () => {
       socket.disconnect();
     };
-  }, [dispatch, token, currentUsername, t]);
+  }, [dispatch, token, currentUsername, activeChannelId, channels, t]);
 
   useEffect(() => {
     if (messageListRef.current) {
@@ -129,7 +138,7 @@ const ChatPage = () => {
     const messagePayload = {
       body: filtered,
       channelId: activeChannelId,
-      username: currentUsername, // ← добавляем имя пользователя
+      username: currentUsername,
     };
 
     try {
@@ -215,7 +224,14 @@ const ChatPage = () => {
         </main>
       </div>
 
-      {showAddChannel && <AddChannelModal onClose={() => setShowAddChannel(false)} />}
+      {showAddChannel && (
+        <AddChannelModal
+          onClose={() => setShowAddChannel(false)}
+          onChannelCreated={(id) => {
+            setCreatedChannelId(id);
+          }}
+        />
+      )}
     </div>
   );
 };
