@@ -90,17 +90,17 @@ const ChatPage = () => {
     socket.on('newChannel', (channel) => {
       dispatch(addChannel(channel));
       dispatch(setActiveChannel(channel.id));
-      toast.success(<div data-testid="toast-channel-added">{t('channelAdded')}</div>);
+      toast.success(t('channelAdded'));
     });
 
     socket.on('removeChannel', ({ id }) => {
       dispatch(removeChannel({ id }));
-      toast.success(<div data-testid="toast-channel-deleted">{t('channelDeleted')}</div>);
+      toast.success(t('channelDeleted'));
     });
 
     socket.on('renameChannel', ({ id, name }) => {
       dispatch(renameChannel({ id, name }));
-      toast.success(<div data-testid="toast-channel-renamed">{t('channelRenamed')}</div>);
+      toast.success(t('channelRenamed'));
     });
 
     // Debug log

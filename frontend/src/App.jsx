@@ -33,7 +33,7 @@ function App() {
       {/* Контейнер для всплывающих уведомлений */}
       <ToastContainer
         position="top-right"
-        autoClose={3000}
+        autoClose={6000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

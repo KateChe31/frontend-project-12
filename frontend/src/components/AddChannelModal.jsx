@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import leoProfanity from 'leo-profanity';
 
+
 const AddChannelModal = ({ onClose }) => {
   const { t } = useTranslation();
   const channels = useSelector((state) => state.chat.channels);
@@ -32,7 +33,7 @@ const AddChannelModal = ({ onClose }) => {
     validateOnBlur: true,
     validateOnChange: false,
     onSubmit: async(values, { setSubmitting }) => {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const cleanedName = leoProfanity.clean(values.name);
 
       try {

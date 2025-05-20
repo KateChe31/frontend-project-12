@@ -5,14 +5,14 @@ import { useTranslation } from 'react-i18next';
 const Header = () => {
   const { t } = useTranslation();
 
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const targetPath = token ? '/' : '/login';
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     navigate('/login');
   };
 
