@@ -27,12 +27,12 @@ const SignupPage = () => {
       sessionStorage.setItem('user', JSON.stringify({ username: values.username }))
 
       navigate('/')
-    } 
+    }
     catch (error) {
       if (error.response?.status === 409) {
         setFieldError('username', t('signup.errors.userExists'))
       }
-    } 
+    }
     finally {
       setSubmitting(false)
     }
@@ -54,14 +54,14 @@ const SignupPage = () => {
                 const errors = {}
                 if (!values.username) {
                   errors.username = t('signup.errors.required')
-                } 
+                }
                 else if (values.username.length < 3 || values.username.length > 20) {
                   errors.username = t('signup.errors.usernameLength')
                 }
 
                 if (!values.password) {
                   errors.password = t('signup.errors.required')
-                } 
+                }
                 else if (values.password.length < 6) {
                   errors.password = t('signup.errors.passwordLength')
                 }

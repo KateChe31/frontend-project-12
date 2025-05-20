@@ -19,10 +19,10 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
     try {
       await onDelete()
       onClose()
-    } 
+    }
     catch {
       console.error(t('modals.deleteChannel.deleteFailed', 'Ошибка при удалении канала'))
-    } 
+    }
     finally {
       setIsSubmitting(false)
     }

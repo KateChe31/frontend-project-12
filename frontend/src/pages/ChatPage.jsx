@@ -63,7 +63,7 @@ const ChatPage = () => {
     const tryFocus = () => {
       if (status === 'succeeded' && activeChannelId && inputRef.current && !inputRef.current.disabled) {
         inputRef.current.focus()
-      } 
+      }
       else {
         setTimeout(tryFocus, 100)
       }
@@ -151,10 +151,10 @@ const ChatPage = () => {
       })
       setNewMessage('')
       inputRef.current?.focus()
-    } 
+    }
     catch (err) {
       console.error('Ошибка отправки сообщения:', err)
-    } 
+    }
     finally {
       setIsSending(false)
     }

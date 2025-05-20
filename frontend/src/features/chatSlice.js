@@ -21,7 +21,7 @@ export const fetchChatData = createAsyncThunk(
         channels: channelsRes.data,
         messages: messagesRes.data,
       }
-    } 
+    }
     catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message)
     }

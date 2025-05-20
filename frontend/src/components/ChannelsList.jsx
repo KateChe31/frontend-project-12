@@ -74,10 +74,10 @@ const ChannelsList = () => {
 
       dispatch(removeChannel({ id: channelIdToDelete }))
       dispatch(removeMessagesByChannel({ channelId: channelIdToDelete }))
-    } 
+    }
     catch (err) {
       console.error('Ошибка при удалении канала:', err)
-    } 
+    }
     finally {
       setIsDeleting(false)
       setDeleteModalChannel(null)
@@ -100,10 +100,10 @@ const ChannelsList = () => {
       )
 
       dispatch(renameChannel({ id: renameModalChannel.id, name: newName }))
-    } 
+    }
     catch (err) {
       console.error('Ошибка при переименовании канала:', err)
-    } 
+    }
     finally {
       setIsRenaming(false)
       setRenameModalChannel(null)

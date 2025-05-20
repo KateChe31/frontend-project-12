@@ -45,7 +45,7 @@ const LoginPage = () => {
       sessionStorage.setItem('user', JSON.stringify({ username: values.username }))
 
       navigate(from, { replace: true })
-    } 
+    }
     catch {
       setErrorMessage(t('login.authError'))
     }
