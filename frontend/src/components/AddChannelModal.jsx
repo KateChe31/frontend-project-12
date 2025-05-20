@@ -1,22 +1,22 @@
-import { useEffect, useRef } from 'react';
-import ReactDOM from 'react-dom';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { useSelector } from 'react-redux';
-import axios from 'axios';
-import { useTranslation } from 'react-i18next';
-import leoProfanity from 'leo-profanity';
+import { useEffect, useRef } from 'react'
+import ReactDOM from 'react-dom'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { useSelector } from 'react-redux'
+import axios from 'axios'
+import { useTranslation } from 'react-i18next'
+import leoProfanity from 'leo-profanity'
 
 const AddChannelModal = ({ onClose, onChannelCreated }) => {
-  const { t } = useTranslation();
-  const channels = useSelector(state => state.chat.channels);
-  const existingNames = channels.map(ch => ch.name.toLowerCase());
-  const inputRef = useRef(null);
-  const modalRef = useRef(null);
+  const { t } = useTranslation()
+  const channels = useSelector(state => state.chat.channels)
+  const existingNames = channels.map(ch => ch.name.toLowerCase())
+  const inputRef = useRef(null)
+  const modalRef = useRef(null)
 
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    inputRef.current?.focus()
+  }, [])
 
   const formik = useFormik({
     initialValues: {
@@ -32,8 +32,8 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
     validateOnBlur: true,
     validateOnChange: false,
     onSubmit: async (values, { setSubmitting }) => {
-      const token = sessionStorage.getItem('token');
-      const cleanedName = leoProfanity.clean(values.name);
+      const token = sessionStorage.getItem('token')
+      const cleanedName = leoProfanity.clean(values.name)
 
       try {
         const res = await axios.post(
@@ -44,32 +44,32 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
               Authorization: `Bearer ${token}`,
             },
           },
-        );
+        )
 
         if (onChannelCreated) {
-          onChannelCreated(res.data.id);
+          onChannelCreated(res.data.id)
         }
 
-        onClose();
+        onClose()
       } catch (err) {
-        console.error('Ошибка при создании канала:', err);
+        console.error('Ошибка при создании канала:', err)
       } finally {
-        setSubmitting(false);
+        setSubmitting(false)
       }
     },
-  });
+  })
 
   const handleBackdropClick = (e) => {
     if (modalRef.current && !modalRef.current.contains(e.target)) {
-      formik.setTouched({}, false);
-      onClose();
+      formik.setTouched({}, false)
+      onClose()
     }
-  };
+  }
 
   const handleCancel = () => {
-    formik.setTouched({}, false);
-    onClose();
-  };
+    formik.setTouched({}, false)
+    onClose()
+  }
 
   return ReactDOM.createPortal(
     <div
@@ -146,7 +146,7 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
       </div>
     </div>,
     document.body,
-  );
-};
+  )
+}
 
-export default AddChannelModal;
+export default AddChannelModal

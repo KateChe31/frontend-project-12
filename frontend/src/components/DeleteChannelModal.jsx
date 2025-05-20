@@ -1,30 +1,30 @@
-import { useState, useEffect, useRef } from 'react';
-import ReactDOM from 'react-dom';
-import { useTranslation } from 'react-i18next';
+import { useState, useEffect, useRef } from 'react'
+import ReactDOM from 'react-dom'
+import { useTranslation } from 'react-i18next'
 
 const DeleteChannelModal = ({ onClose, onDelete }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const deleteButtonRef = useRef(null);
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const deleteButtonRef = useRef(null)
 
   useEffect(() => {
-    deleteButtonRef.current?.focus();
-  }, []);
+    deleteButtonRef.current?.focus()
+  }, [])
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+    e.preventDefault()
+    setIsSubmitting(true)
 
     try {
-      await onDelete();
-      onClose();
+      await onDelete()
+      onClose()
     } catch {
-      console.error(t('modals.deleteChannel.deleteFailed', 'Ошибка при удалении канала'));
+      console.error(t('modals.deleteChannel.deleteFailed', 'Ошибка при удалении канала'))
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return ReactDOM.createPortal(
     <div
@@ -79,7 +79,7 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
       </div>
     </div>,
     document.body,
-  );
-};
+  )
+}
 
-export default DeleteChannelModal;
+export default DeleteChannelModal

@@ -1,40 +1,40 @@
-import { useRef, useEffect } from 'react';
-import { Formik, Form, Field } from 'formik';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useTranslation } from 'react-i18next';
+import { useRef, useEffect } from 'react'
+import { Formik, Form, Field } from 'formik'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import { useTranslation } from 'react-i18next'
 
-import Header from '../components/Header';
+import Header from '../components/Header'
 
 const SignupPage = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const usernameRef = useRef(null);
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const usernameRef = useRef(null)
 
   useEffect(() => {
-    usernameRef.current?.focus();
-  }, []);
+    usernameRef.current?.focus()
+  }, [])
 
   const handleSubmit = async (values, { setSubmitting, setFieldError }) => {
     try {
       const response = await axios.post('/api/v1/signup', {
         username: values.username,
         password: values.password,
-      });
+      })
 
-      const { token } = response.data;
-      sessionStorage.setItem('token', token);
-      sessionStorage.setItem('user', JSON.stringify({ username: values.username }));
+      const { token } = response.data
+      sessionStorage.setItem('token', token)
+      sessionStorage.setItem('user', JSON.stringify({ username: values.username }))
 
-      navigate('/');
+      navigate('/')
     } catch (error) {
       if (error.response?.status === 409) {
-        setFieldError('username', t('signup.errors.userExists'));
+        setFieldError('username', t('signup.errors.userExists'))
       }
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
 
   return (
     <>
@@ -49,24 +49,24 @@ const SignupPage = () => {
               validateOnBlur={true}
               validateOnChange={false}
               validate={(values) => {
-                const errors = {};
+                const errors = {}
                 if (!values.username) {
-                  errors.username = t('signup.errors.required');
+                  errors.username = t('signup.errors.required')
                 } else if (values.username.length < 3 || values.username.length > 20) {
-                  errors.username = t('signup.errors.usernameLength');
+                  errors.username = t('signup.errors.usernameLength')
                 }
 
                 if (!values.password) {
-                  errors.password = t('signup.errors.required');
+                  errors.password = t('signup.errors.required')
                 } else if (values.password.length < 6) {
-                  errors.password = t('signup.errors.passwordLength');
+                  errors.password = t('signup.errors.passwordLength')
                 }
 
                 if (values.password !== values.passwordConfirm) {
-                  errors.passwordConfirm = t('signup.errors.passwordsMustMatch');
+                  errors.passwordConfirm = t('signup.errors.passwordsMustMatch')
                 }
 
-                return errors;
+                return errors
               }}
               onSubmit={handleSubmit}
             >
@@ -115,8 +115,8 @@ const SignupPage = () => {
                       className={`form-control ${errors.passwordConfirm && touched.passwordConfirm ? 'is-invalid' : ''}`}
                       placeholder=" "
                       onFocus={() => {
-                        setFieldTouched('username', true);
-                        setFieldTouched('password', true);
+                        setFieldTouched('username', true)
+                        setFieldTouched('password', true)
                       }}
                     />
                     <label htmlFor="passwordConfirm">{t('signup.passwordConfirm')}</label>
@@ -135,7 +135,7 @@ const SignupPage = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default SignupPage;
+export default SignupPage

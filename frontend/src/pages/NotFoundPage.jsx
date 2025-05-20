@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 const NotFoundPage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   return (
     <div className="container text-center mt-5">
@@ -15,7 +15,7 @@ const NotFoundPage = () => {
         </Link>
       </p>
     </div>
-  );
-};
+  )
+}
 
-export default NotFoundPage;
+export default NotFoundPage

@@ -1,26 +1,26 @@
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 const Header = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
-  const token = sessionStorage.getItem('token');
-  const targetPath = token ? '/' : '/login';
-  const navigate = useNavigate();
-  const location = useLocation();
+  const token = sessionStorage.getItem('token')
+  const targetPath = token ? '/' : '/login'
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const handleLogout = () => {
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('user');
-    navigate('/login');
-  };
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('user')
+    navigate('/login')
+  }
 
   const handleHexletChatClick = () => {
     if (location.pathname === '/login') {
-      const event = new Event('focusUsername');
-      window.dispatchEvent(event);
+      const event = new Event('focusUsername')
+      window.dispatchEvent(event)
     }
-  };
+  }
 
   return (
     <header className="py-3 px-4 border-bottom">
@@ -47,7 +47,7 @@ const Header = () => {
         </div>
       </div>
     </header>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

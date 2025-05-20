@@ -1,7 +1,7 @@
-import js from '@eslint/js';
-import globals from 'globals';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
 
 
 export default [
@@ -33,10 +33,9 @@ export default [
       'import/no-named-as-default-member': 'off',
       'no-console': 'off',
       'import/no-extraneous-dependencies': 'off',
-      'semi': ['error', 'never'],
+      semi: ['error', 'never'],
       'brace-style': ['error', '1tbs', { allowSingleLine: false }],
-      'arrow-parens': ['error', 'as-needed'],
       'quote-props': ['error', 'as-needed'],
     },
   },
-];
+]

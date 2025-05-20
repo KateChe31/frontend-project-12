@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useState, useRef } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import {
   fetchChatData,
   setActiveChannel,
@@ -8,161 +8,161 @@ import {
   addChannel,
   removeChannel,
   renameChannel,
-} from '../features/chatSlice';
-import axios from 'axios';
-import { createSocket } from '../socket';
-import AddChannelModal from '../components/AddChannelModal';
-import ChannelsList from '../components/ChannelsList';
-import Header from '../components/Header';
-import { toast } from 'react-toastify';
-import leoProfanity from 'leo-profanity';
+} from '../features/chatSlice'
+import axios from 'axios'
+import { createSocket } from '../socket'
+import AddChannelModal from '../components/AddChannelModal'
+import ChannelsList from '../components/ChannelsList'
+import Header from '../components/Header'
+import { toast } from 'react-toastify'
+import leoProfanity from 'leo-profanity'
 
-const dictionary = leoProfanity.getDictionary('en');
-const ruDictionary = leoProfanity.getDictionary('ru');
-leoProfanity.add(dictionary);
-leoProfanity.add(ruDictionary);
+const dictionary = leoProfanity.getDictionary('en')
+const ruDictionary = leoProfanity.getDictionary('ru')
+leoProfanity.add(dictionary)
+leoProfanity.add(ruDictionary)
 
-const DEFAULT_CHANNEL_NAME = 'general';
+const DEFAULT_CHANNEL_NAME = 'general'
 
 const ChatPage = () => {
-  const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const { channels, messages, activeChannelId, status, error } = useSelector(state => state.chat);
+  const { t } = useTranslation()
+  const dispatch = useDispatch()
+  const { channels, messages, activeChannelId, status, error } = useSelector(state => state.chat)
 
-  const [newMessage, setNewMessage] = useState('');
-  const [isConnected, setIsConnected] = useState(false);
-  const [showAddChannel, setShowAddChannel] = useState(false);
-  const [isSending, setIsSending] = useState(false);
+  const [newMessage, setNewMessage] = useState('')
+  const [isConnected, setIsConnected] = useState(false)
+  const [showAddChannel, setShowAddChannel] = useState(false)
+  const [isSending, setIsSending] = useState(false)
 
-  const [createdChannelId, setCreatedChannelId] = useState(null);
+  const [createdChannelId, setCreatedChannelId] = useState(null)
 
-  const messageListRef = useRef(null);
-  const inputRef = useRef(null);
-  const socketRef = useRef(null);
+  const messageListRef = useRef(null)
+  const inputRef = useRef(null)
+  const socketRef = useRef(null)
 
-  const user = JSON.parse(sessionStorage.getItem('user'));
-  const token = sessionStorage.getItem('token');
-  const currentUsername = user?.username || 'unknown';
+  const user = JSON.parse(sessionStorage.getItem('user'))
+  const token = sessionStorage.getItem('token')
+  const currentUsername = user?.username || 'unknown'
 
   useEffect(() => {
     dispatch(fetchChatData())
       .unwrap()
       .catch(() => {
-        toast.error(t('fetchError'));
-      });
-  }, [dispatch, t]);
+        toast.error(t('fetchError'))
+      })
+  }, [dispatch, t])
 
   useEffect(() => {
     if (createdChannelId) {
-      dispatch(setActiveChannel(createdChannelId));
-      setCreatedChannelId(null);
+      dispatch(setActiveChannel(createdChannelId))
+      setCreatedChannelId(null)
     }
-  }, [createdChannelId, dispatch]);
+  }, [createdChannelId, dispatch])
 
   useEffect(() => {
     const tryFocus = () => {
       if (status === 'succeeded' && activeChannelId && inputRef.current && !inputRef.current.disabled) {
-        inputRef.current.focus();
+        inputRef.current.focus()
       } else {
-        setTimeout(tryFocus, 100);
+        setTimeout(tryFocus, 100)
       }
-    };
+    }
 
-    tryFocus();
-  }, [status, activeChannelId, isConnected, isSending]);
+    tryFocus()
+  }, [status, activeChannelId, isConnected, isSending])
 
   useEffect(() => {
-    const socket = createSocket(token, currentUsername);
-    socketRef.current = socket;
+    const socket = createSocket(token, currentUsername)
+    socketRef.current = socket
 
-    setIsConnected(socket.connected);
+    setIsConnected(socket.connected)
 
-    socket.on('connect', () => setIsConnected(true));
-    socket.on('disconnect', () => setIsConnected(false));
+    socket.on('connect', () => setIsConnected(true))
+    socket.on('disconnect', () => setIsConnected(false))
 
     socket.on('connect_error', () => {
-      toast.error(t('networkError'));
-    });
+      toast.error(t('networkError'))
+    })
 
     socket.on('newMessage', (message) => {
-      const cleanedBody = leoProfanity.clean(message.body);
-      const patchedMessage = { ...message, body: cleanedBody };
-      dispatch(addMessage(patchedMessage));
-    });
+      const cleanedBody = leoProfanity.clean(message.body)
+      const patchedMessage = { ...message, body: cleanedBody }
+      dispatch(addMessage(patchedMessage))
+    })
 
     socket.on('newChannel', (channel) => {
-      dispatch(addChannel(channel));
-      toast.success(t('channelAdded'));
-    });
+      dispatch(addChannel(channel))
+      toast.success(t('channelAdded'))
+    })
 
     socket.on('removeChannel', ({ id }) => {
-      dispatch(removeChannel({ id }));
+      dispatch(removeChannel({ id }))
 
       if (id === activeChannelId) {
-        const generalChannel = channels.find(ch => ch.name === DEFAULT_CHANNEL_NAME);
+        const generalChannel = channels.find(ch => ch.name === DEFAULT_CHANNEL_NAME)
         if (generalChannel) {
-          dispatch(setActiveChannel(generalChannel.id));
+          dispatch(setActiveChannel(generalChannel.id))
         }
       }
 
-      toast.success(t('channelDeleted'));
-    });
+      toast.success(t('channelDeleted'))
+    })
 
     socket.on('renameChannel', ({ id, name }) => {
-      dispatch(renameChannel({ id, name }));
-      toast.success(t('channelRenamed'));
-    });
+      dispatch(renameChannel({ id, name }))
+      toast.success(t('channelRenamed'))
+    })
 
     socket.onAny((event, ...args) => {
-      console.log('[Socket Event]', event, args);
-    });
+      console.log('[Socket Event]', event, args)
+    })
 
     return () => {
-      socket.disconnect();
-    };
-  }, [dispatch, token, currentUsername, activeChannelId, channels, t]);
+      socket.disconnect()
+    }
+  }, [dispatch, token, currentUsername, activeChannelId, channels, t])
 
   useEffect(() => {
     if (messageListRef.current) {
-      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight
     }
-  }, [messages, activeChannelId]);
+  }, [messages, activeChannelId])
 
   const handleSend = async (e) => {
-    e.preventDefault();
-    const trimmed = newMessage.trim();
-    if (!trimmed || !activeChannelId) return;
+    e.preventDefault()
+    const trimmed = newMessage.trim()
+    if (!trimmed || !activeChannelId) return
 
-    const filtered = leoProfanity.clean(trimmed);
+    const filtered = leoProfanity.clean(trimmed)
 
     const messagePayload = {
       body: filtered,
       channelId: activeChannelId,
       username: currentUsername,
-    };
+    }
 
     try {
-      setIsSending(true);
+      setIsSending(true)
       await axios.post('/api/v1/messages', messagePayload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      });
-      setNewMessage('');
-      inputRef.current?.focus();
+      })
+      setNewMessage('')
+      inputRef.current?.focus()
     } catch (err) {
-      console.error('Ошибка отправки сообщения:', err);
+      console.error('Ошибка отправки сообщения:', err)
     } finally {
-      setIsSending(false);
+      setIsSending(false)
     }
-  };
-
-  if (error) {
-    return <p className="text-danger text-center mt-5">{error}</p>;
   }
 
-  const activeMessages = messages.filter(msg => msg.channelId === activeChannelId);
-  const activeChannel = channels.find(ch => ch.id === activeChannelId);
+  if (error) {
+    return <p className="text-danger text-center mt-5">{error}</p>
+  }
+
+  const activeMessages = messages.filter(msg => msg.channelId === activeChannelId)
+  const activeChannel = channels.find(ch => ch.id === activeChannelId)
 
   return (
     <div className="d-flex flex-column vh-100">
@@ -230,12 +230,12 @@ const ChatPage = () => {
         <AddChannelModal
           onClose={() => setShowAddChannel(false)}
           onChannelCreated={(id) => {
-            setCreatedChannelId(id);
+            setCreatedChannelId(id)
           }}
         />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ChatPage;
+export default ChatPage

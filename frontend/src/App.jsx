@@ -1,14 +1,14 @@
-import { Routes, Route } from 'react-router-dom';
-import './App.css';
+import { Routes, Route } from 'react-router-dom'
+import './App.css'
 
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
-import NotFoundPage from './pages/NotFoundPage';
-import PrivateRoute from './components/PrivateRoute';
-import ChatPage from './pages/ChatPage';
+import LoginPage from './pages/LoginPage'
+import SignupPage from './pages/SignupPage'
+import NotFoundPage from './pages/NotFoundPage'
+import PrivateRoute from './components/PrivateRoute'
+import ChatPage from './pages/ChatPage'
 
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function App() {
   return (
@@ -43,7 +43,7 @@ function App() {
         pauseOnHover
       />
     </>
-  );
+  )
 }
 
-export default App;
+export default App

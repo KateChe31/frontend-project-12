@@ -1,62 +1,62 @@
-import { useState, useEffect, useRef } from 'react';
-import ReactDOM from 'react-dom';
-import { useTranslation } from 'react-i18next';
-import leoProfanity from 'leo-profanity';
+import { useState, useEffect, useRef } from 'react'
+import ReactDOM from 'react-dom'
+import { useTranslation } from 'react-i18next'
+import leoProfanity from 'leo-profanity'
 
 const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
-  const [name, setName] = useState(currentName);
-  const [error, setError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const inputRef = useRef(null);
-
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+  const [name, setName] = useState(currentName)
+  const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const inputRef = useRef(null)
 
   useEffect(() => {
-    setError('');
-  }, [name]);
+    inputRef.current?.focus()
+  }, [])
+
+  useEffect(() => {
+    setError('')
+  }, [name])
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
-        onClose();
+        onClose()
       }
-    };
-    document.addEventListener('keydown', handleKeyDown);
+    }
+    document.addEventListener('keydown', handleKeyDown)
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [onClose]);
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [onClose])
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const trimmedName = name.trim();
+    e.preventDefault()
+    const trimmedName = name.trim()
 
     if (trimmedName.length < 3 || trimmedName.length > 20) {
-      setError(t('modals.renameChannel.errors.minMax'));
-      return;
+      setError(t('modals.renameChannel.errors.minMax'))
+      return
     }
 
     if (existingNames.includes(trimmedName) && trimmedName !== currentName) {
-      setError(t('modals.renameChannel.errors.unique'));
-      return;
+      setError(t('modals.renameChannel.errors.unique'))
+      return
     }
 
-    const cleanedName = leoProfanity.clean(trimmedName);
+    const cleanedName = leoProfanity.clean(trimmedName)
 
     try {
-      setIsSubmitting(true);
-      await onRename(cleanedName);
-      onClose();
+      setIsSubmitting(true)
+      await onRename(cleanedName)
+      onClose()
     } catch (err) {
-      console.error('Ошибка при переименовании канала:', err);
+      console.error('Ошибка при переименовании канала:', err)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return ReactDOM.createPortal(
     <div
@@ -124,7 +124,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
       </div>
     </div>,
     document.body,
-  );
-};
+  )
+}
 
-export default RenameChannelModal;
+export default RenameChannelModal

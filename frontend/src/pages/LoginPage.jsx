@@ -1,54 +1,54 @@
-import { useState, useRef, useEffect } from 'react';
-import { Formik, Form, Field } from 'formik';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
-import axios from 'axios';
-import { useTranslation } from 'react-i18next';
-import Header from '../components/Header';
+import { useState, useRef, useEffect } from 'react'
+import { Formik, Form, Field } from 'formik'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
+import axios from 'axios'
+import { useTranslation } from 'react-i18next'
+import Header from '../components/Header'
 
 const LoginPage = () => {
-  const { t } = useTranslation();
-  const [errorMessage, setErrorMessage] = useState('');
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { t } = useTranslation()
+  const [errorMessage, setErrorMessage] = useState('')
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  const from = location.state?.from?.pathname || '/';
-  const usernameInputRef = useRef(null);
+  const from = location.state?.from?.pathname || '/'
+  const usernameInputRef = useRef(null)
 
   useEffect(() => {
     if (usernameInputRef.current) {
-      usernameInputRef.current.focus();
+      usernameInputRef.current.focus()
     }
 
     const handleFocusEvent = () => {
       if (usernameInputRef.current) {
-        usernameInputRef.current.focus();
+        usernameInputRef.current.focus()
       }
-    };
+    }
 
-    window.addEventListener('focusUsername', handleFocusEvent);
+    window.addEventListener('focusUsername', handleFocusEvent)
 
     return () => {
-      window.removeEventListener('focusUsername', handleFocusEvent);
-    };
-  }, []);
+      window.removeEventListener('focusUsername', handleFocusEvent)
+    }
+  }, [])
 
   const handleSubmit = async (values) => {
     try {
       const response = await axios.post('/api/v1/login', {
         username: values.username,
         password: values.password,
-      });
+      })
 
-      const { token } = response.data;
+      const { token } = response.data
 
-      sessionStorage.setItem('token', token);
-      sessionStorage.setItem('user', JSON.stringify({ username: values.username }));
+      sessionStorage.setItem('token', token)
+      sessionStorage.setItem('user', JSON.stringify({ username: values.username }))
 
-      navigate(from, { replace: true });
+      navigate(from, { replace: true })
     } catch {
-      setErrorMessage(t('login.authError'));
+      setErrorMessage(t('login.authError'))
     }
-  };
+  }
 
   return (
     <div className="min-vh-100 d-flex flex-column">
@@ -117,7 +117,7 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LoginPage;
+export default LoginPage
