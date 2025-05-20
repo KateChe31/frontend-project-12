@@ -196,7 +196,7 @@ const ChatPage = () => {
             {activeMessages.map(msg => (
               <div key={msg.id} className="mb-2">
                 <strong>{msg.username}</strong>
-                : 
+                :
                 {msg.body}
               </div>
             ))}

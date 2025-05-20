@@ -110,7 +110,7 @@ const LoginPage = () => {
             </Formik>
 
             <p className="text-center mt-3">
-              {t('login.noAccount')} 
+              {t('login.noAccount')}
               <Link to="/signup">{t('login.signup')}</Link>
             </p>
           </div>

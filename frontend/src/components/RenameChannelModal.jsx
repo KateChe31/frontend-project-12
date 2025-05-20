@@ -70,7 +70,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
       <div
         className="modal-dialog modal-dialog-centered"
         role="document"
-        onClick={e=> e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <form className="modal-content" onSubmit={handleSubmit}>
           <div className="modal-header">
