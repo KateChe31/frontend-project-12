@@ -51,9 +51,11 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
         }
 
         onClose()
-      } catch (err) {
+      } 
+      catch (err) {
         console.error('Ошибка при создании канала:', err)
-      } finally {
+      } 
+      finally {
         setSubmitting(false)
       }
     },

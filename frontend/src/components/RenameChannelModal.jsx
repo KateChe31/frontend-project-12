@@ -51,9 +51,11 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
       setIsSubmitting(true)
       await onRename(cleanedName)
       onClose()
-    } catch (err) {
+    } 
+    catch (err) {
       console.error('Ошибка при переименовании канала:', err)
-    } finally {
+    } 
+    finally {
       setIsSubmitting(false)
     }
   }

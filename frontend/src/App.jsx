@@ -16,11 +16,11 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={
+          element={(
             <PrivateRoute>
               <ChatPage />
             </PrivateRoute>
-          }
+          )}
         />
 
         <Route path="/login" element={<LoginPage />} />
