@@ -87,6 +87,7 @@ const ChannelsList = () => {
                       disabled={isBusy}
                       aria-label={t('channelsList.channelManagement')}
                     >
+                      <span className="visually-hidden">{t('channelsList.channelManagement')}</span>
                     </button>
                     <ul
                       className="dropdown-menu dropdown-menu-start"
