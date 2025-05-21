@@ -51,9 +51,11 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
       setIsSubmitting(true)
       await onRename(cleanedName)
       onClose()
-    } catch (err) {
+    }
+    catch (err) {
       console.error('Ошибка при переименовании канала:', err)
-    } finally {
+    }
+    finally {
       setIsSubmitting(false)
     }
   }
@@ -69,7 +71,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
       <div
         className="modal-dialog modal-dialog-centered"
         role="document"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <form className="modal-content" onSubmit={handleSubmit}>
           <div className="modal-header">
@@ -92,7 +94,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
               type="text"
               className="form-control"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={e => setName(e.target.value)}
               ref={inputRef}
               disabled={isSubmitting}
               placeholder={t('modals.renameChannel.placeholder')}
@@ -120,7 +122,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
         </form>
       </div>
     </div>,
-    document.body
+    document.body,
   )
 }
 

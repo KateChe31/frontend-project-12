@@ -7,10 +7,11 @@ export const fetchChatData = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       return await fetchChatDataRequest()
-    } catch (err) {
+    }
+    catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message)
     }
-  }
+  },
 )
 
 const addUsernameToMessage = (msg) => {

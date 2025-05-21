@@ -10,8 +10,8 @@ import { createChannelRequest } from '../api/chatApi'
 
 const AddChannelModal = ({ onClose, onChannelCreated }) => {
   const { t } = useTranslation()
-  const channels = useSelector((state) => state.chat.channels)
-  const existingNames = channels.map((ch) => ch.name.toLowerCase())
+  const channels = useSelector(state => state.chat.channels)
+  const existingNames = channels.map(ch => ch.name.toLowerCase())
   const inputRef = useRef(null)
   const modalRef = useRef(null)
 
@@ -40,9 +40,11 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
           onChannelCreated(data.id)
         }
         onClose()
-      } catch (err) {
+      }
+      catch (err) {
         console.error('Ошибка при создании канала:', err)
-      } finally {
+      }
+      finally {
         setSubmitting(false)
       }
     },
@@ -72,7 +74,7 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
         className="modal-dialog"
         role="document"
         ref={modalRef}
-        onMouseDown={(e) => e.stopPropagation()}
+        onMouseDown={e => e.stopPropagation()}
       >
         <div className="modal-content">
           <form onSubmit={formik.handleSubmit}>
@@ -128,7 +130,7 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   )
 }
 

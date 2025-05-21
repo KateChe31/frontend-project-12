@@ -19,9 +19,11 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
     try {
       await onDelete()
       onClose()
-    } catch {
+    }
+    catch {
       console.error(t('modals.deleteChannel.deleteFailed', 'Ошибка при удалении канала'))
-    } finally {
+    }
+    finally {
       setIsSubmitting(false)
     }
   }
@@ -37,7 +39,7 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
       <div
         className="modal-dialog modal-dialog-centered"
         role="document"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <form className="modal-content" onSubmit={handleSubmit}>
           <div className="modal-header">
@@ -74,7 +76,7 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
         </form>
       </div>
     </div>,
-    document.body
+    document.body,
   )
 }
 

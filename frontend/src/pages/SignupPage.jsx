@@ -25,11 +25,13 @@ const SignupPage = () => {
       sessionStorage.setItem('token', token)
       sessionStorage.setItem('user', JSON.stringify({ username: values.username }))
       navigate('/')
-    } catch (error) {
+    }
+    catch (error) {
       if (error.response?.status === 409) {
         setFieldError('username', t('signup.errors.userExists'))
       }
-    } finally {
+    }
+    finally {
       setSubmitting(false)
     }
   }
@@ -60,13 +62,15 @@ const SignupPage = () => {
                 const errors = {}
                 if (!values.username) {
                   errors.username = t('signup.errors.required')
-                } else if (values.username.length < 3 || values.username.length > 20) {
+                }
+                else if (values.username.length < 3 || values.username.length > 20) {
                   errors.username = t('signup.errors.usernameLength')
                 }
 
                 if (!values.password) {
                   errors.password = t('signup.errors.required')
-                } else if (values.password.length < 6) {
+                }
+                else if (values.password.length < 6) {
                   errors.password = t('signup.errors.passwordLength')
                 }
 

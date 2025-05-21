@@ -33,7 +33,8 @@ const LoginPage = () => {
       sessionStorage.setItem('token', token)
       sessionStorage.setItem('user', JSON.stringify({ username: values.username }))
       navigate(from, { replace: true })
-    } catch {
+    }
+    catch {
       setErrorMessage(t('login.authError'))
     }
   }
@@ -109,7 +110,8 @@ const LoginPage = () => {
             </Formik>
 
             <p className="text-center mt-3">
-              {t('login.noAccount')} <Link to="/signup">{t('login.signup')}</Link>
+              {t('login.noAccount')}
+              <Link to="/signup">{t('login.signup')}</Link>
             </p>
           </div>
 

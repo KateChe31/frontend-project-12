@@ -14,8 +14,8 @@ import { deleteChannelRequest, renameChannelRequest } from '../api/chatApi'
 
 const ChannelsList = () => {
   const { t } = useTranslation()
-  const channels = useSelector((state) => state.chat.channels)
-  const activeChannelId = useSelector((state) => state.chat.activeChannelId)
+  const channels = useSelector(state => state.chat.channels)
+  const activeChannelId = useSelector(state => state.chat.activeChannelId)
   const dispatch = useDispatch()
 
   const [deleteModalChannel, setDeleteModalChannel] = useState(null)
@@ -33,9 +33,11 @@ const ChannelsList = () => {
       await deleteChannelRequest(deleteModalChannel.id)
       dispatch(removeChannel({ id: deleteModalChannel.id }))
       dispatch(removeMessagesByChannel({ channelId: deleteModalChannel.id }))
-    } catch (err) {
+    }
+    catch (err) {
       console.error('Ошибка при удалении канала:', err)
-    } finally {
+    }
+    finally {
       setIsDeleting(false)
       setDeleteModalChannel(null)
     }
@@ -48,9 +50,11 @@ const ChannelsList = () => {
     try {
       await renameChannelRequest(renameModalChannel.id, newName)
       dispatch(renameChannel({ id: renameModalChannel.id, name: newName }))
-    } catch (err) {
+    }
+    catch (err) {
       console.error('Ошибка при переименовании канала:', err)
-    } finally {
+    }
+    finally {
       setIsRenaming(false)
       setRenameModalChannel(null)
     }
@@ -132,7 +136,7 @@ const ChannelsList = () => {
       {renameModalChannel && (
         <RenameChannelModal
           currentName={renameModalChannel.name}
-          existingNames={channels.map((ch) => ch.name)}
+          existingNames={channels.map(ch => ch.name)}
           onClose={() => setRenameModalChannel(null)}
           onRename={handleRenameConfirmed}
           isLoading={isRenaming}

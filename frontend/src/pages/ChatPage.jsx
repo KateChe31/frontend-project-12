@@ -62,7 +62,8 @@ const ChatPage = () => {
     const tryFocus = () => {
       if (status === 'succeeded' && activeChannelId && inputRef.current && !inputRef.current.disabled) {
         inputRef.current.focus()
-      } else {
+      }
+      else {
         setTimeout(tryFocus, 100)
       }
     }
@@ -145,10 +146,12 @@ const ChatPage = () => {
       await sendMessageRequest(messagePayload)
       setNewMessage('')
       inputRef.current?.focus()
-    } catch (err) {
+    }
+    catch (err) {
       toast.error(t('sendMessageError'))
       console.error('Ошибка отправки сообщения:', err)
-    } finally {
+    }
+    finally {
       setIsSending(false)
     }
   }
@@ -192,11 +195,13 @@ const ChatPage = () => {
             ref={messageListRef}
             className="border rounded p-3 mb-3 flex-grow-1 overflow-auto text-start"
           >
-              {activeMessages.map(msg => (
+            {activeMessages.map(msg => (
               <div key={msg.id} className="mb-2">
-                <strong>{msg.username}</strong>: {msg.body}
+                <strong>{msg.username}</strong>
+                : 
+                {msg.body}
               </div>
-              ))}
+            ))}
           </div>
 
           <form onSubmit={handleSend} className="d-flex">
