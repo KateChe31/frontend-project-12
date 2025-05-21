@@ -1,10 +1,10 @@
 import { useRef, useEffect } from 'react'
 import { Formik, Form, Field } from 'formik'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 
 import Header from '../components/Header'
+import { signupRequest } from '../api/chatApi'
 
 const SignupPage = () => {
   const { t } = useTranslation()
@@ -17,23 +17,19 @@ const SignupPage = () => {
 
   const handleSubmit = async (values, { setSubmitting, setFieldError }) => {
     try {
-      const response = await axios.post('/api/v1/signup', {
+      const { token } = await signupRequest({
         username: values.username,
         password: values.password,
       })
 
-      const { token } = response.data
       sessionStorage.setItem('token', token)
       sessionStorage.setItem('user', JSON.stringify({ username: values.username }))
-
       navigate('/')
-    }
-    catch (error) {
+    } catch (error) {
       if (error.response?.status === 409) {
         setFieldError('username', t('signup.errors.userExists'))
       }
-    }
-    finally {
+    } finally {
       setSubmitting(false)
     }
   }
@@ -42,8 +38,18 @@ const SignupPage = () => {
     <>
       <Header />
       <div className="container min-vh-100 d-flex justify-content-center align-items-center">
-        <div className="w-100 d-flex flex-column align-items-center">
-          <div style={{ width: '100%', maxWidth: '500px' }}>
+        <div className="row w-100 justify-content-center align-items-center">
+
+          <div className="col-md-6 d-none d-md-flex justify-content-center">
+            <img
+              src="/signup.svg"
+              alt="Signup illustration"
+              className="img-fluid"
+              style={{ maxHeight: '400px' }}
+            />
+          </div>
+
+          <div className="col-12 col-md-6 col-lg-4">
             <h1 className="text-center mb-4">{t('signup.title')}</h1>
 
             <Formik
@@ -54,15 +60,13 @@ const SignupPage = () => {
                 const errors = {}
                 if (!values.username) {
                   errors.username = t('signup.errors.required')
-                }
-                else if (values.username.length < 3 || values.username.length > 20) {
+                } else if (values.username.length < 3 || values.username.length > 20) {
                   errors.username = t('signup.errors.usernameLength')
                 }
 
                 if (!values.password) {
                   errors.password = t('signup.errors.required')
-                }
-                else if (values.password.length < 6) {
+                } else if (values.password.length < 6) {
                   errors.password = t('signup.errors.passwordLength')
                 }
 
@@ -77,7 +81,7 @@ const SignupPage = () => {
               {({ errors, touched, isSubmitting, setFieldTouched }) => (
                 <Form>
                   {/* Имя пользователя */}
-                  <div className="form-floating mb-3 position-relative">
+                  <div className="form-floating mb-3">
                     <Field
                       innerRef={usernameRef}
                       type="text"
@@ -94,7 +98,7 @@ const SignupPage = () => {
                   </div>
 
                   {/* Пароль */}
-                  <div className="form-floating mb-3 position-relative">
+                  <div className="form-floating mb-3">
                     <Field
                       type="password"
                       name="password"
@@ -111,7 +115,7 @@ const SignupPage = () => {
                   </div>
 
                   {/* Подтверждение пароля */}
-                  <div className="form-floating mb-3 position-relative">
+                  <div className="form-floating mb-3">
                     <Field
                       type="password"
                       name="passwordConfirm"

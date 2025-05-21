@@ -51,28 +51,25 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
       setIsSubmitting(true)
       await onRename(cleanedName)
       onClose()
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Ошибка при переименовании канала:', err)
-    }
-    finally {
+    } finally {
       setIsSubmitting(false)
     }
   }
 
   return ReactDOM.createPortal(
     <div
-      className="modal d-block"
+      className="modal fade show d-block"
       tabIndex="-1"
       role="dialog"
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       aria-modal="true"
       onClick={onClose}
     >
       <div
         className="modal-dialog modal-dialog-centered"
         role="document"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <form className="modal-content" onSubmit={handleSubmit}>
           <div className="modal-header">
@@ -85,10 +82,8 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
               disabled={isSubmitting}
             />
           </div>
-          <div
-            className="modal-body"
-            style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
-          >
+
+          <div className="modal-body">
             <label htmlFor="channel-name-input" className="visually-hidden">
               {t('modals.renameChannel.label')}
             </label>
@@ -97,14 +92,14 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
               type="text"
               className="form-control"
               value={name}
-              onChange={e => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               ref={inputRef}
-              style={{ minWidth: 0 }}
               disabled={isSubmitting}
               placeholder={t('modals.renameChannel.placeholder')}
             />
             {error && <div className="text-danger mt-2">{error}</div>}
           </div>
+
           <div className="modal-footer">
             <button
               type="submit"
@@ -125,7 +120,7 @@ const RenameChannelModal = ({ currentName, onClose, onRename, existingNames }) =
         </form>
       </div>
     </div>,
-    document.body,
+    document.body
   )
 }
 

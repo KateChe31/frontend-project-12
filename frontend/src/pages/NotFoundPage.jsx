@@ -8,9 +8,8 @@ const NotFoundPage = () => {
     <div className="container text-center mt-5">
       <h1>{t('notFound.title')}</h1>
       <p>
-        {t('notFound.message')}
-        {' '}
-        <Link to="/" style={{ textDecoration: 'underline', color: 'inherit' }}>
+        {t('notFound.message')}{' '}
+        <Link to="/" className="text-decoration-underline">
           {t('notFound.back')}
         </Link>
       </p>

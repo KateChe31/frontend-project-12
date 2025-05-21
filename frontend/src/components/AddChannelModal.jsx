@@ -3,14 +3,15 @@ import ReactDOM from 'react-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useSelector } from 'react-redux'
-import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import leoProfanity from 'leo-profanity'
 
+import { createChannelRequest } from '../api/chatApi'
+
 const AddChannelModal = ({ onClose, onChannelCreated }) => {
   const { t } = useTranslation()
-  const channels = useSelector(state => state.chat.channels)
-  const existingNames = channels.map(ch => ch.name.toLowerCase())
+  const channels = useSelector((state) => state.chat.channels)
+  const existingNames = channels.map((ch) => ch.name.toLowerCase())
   const inputRef = useRef(null)
   const modalRef = useRef(null)
 
@@ -32,30 +33,16 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
     validateOnBlur: true,
     validateOnChange: false,
     onSubmit: async (values, { setSubmitting }) => {
-      const token = sessionStorage.getItem('token')
       const cleanedName = leoProfanity.clean(values.name)
-
       try {
-        const res = await axios.post(
-          '/api/v1/channels',
-          { name: cleanedName },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        )
-
+        const data = await createChannelRequest(cleanedName)
         if (onChannelCreated) {
-          onChannelCreated(res.data.id)
+          onChannelCreated(data.id)
         }
-
         onClose()
-      }
-      catch (err) {
+      } catch (err) {
         console.error('Ошибка при создании канала:', err)
-      }
-      finally {
+      } finally {
         setSubmitting(false)
       }
     },
@@ -75,18 +62,17 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
 
   return ReactDOM.createPortal(
     <div
-      className="modal fade show d-block"
+      className="modal fade show d-block bg-dark bg-opacity-50"
       tabIndex="-1"
       role="dialog"
       aria-modal="true"
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       onMouseDown={handleBackdropClick}
     >
       <div
         className="modal-dialog"
         role="document"
         ref={modalRef}
-        onMouseDown={e => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="modal-content">
           <form onSubmit={formik.handleSubmit}>
@@ -96,14 +82,11 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
                 type="button"
                 className="btn-close"
                 onMouseDown={handleCancel}
-                aria-label="Закрыть"
-              >
-              </button>
+                aria-label="Close"
+              />
             </div>
-            <div
-              className="modal-body"
-              style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
-            >
+
+            <div className="modal-body text-break">
               <label htmlFor="channelName" className="form-label visually-hidden">
                 {t('modals.addChannel.label')}
               </label>
@@ -111,21 +94,19 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
                 id="channelName"
                 type="text"
                 name="name"
-                className={`form-control ${
-                  formik.touched.name && formik.errors.name ? 'is-invalid' : ''
-                }`}
+                className={`form-control ${formik.touched.name && formik.errors.name ? 'is-invalid' : ''}`}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.name}
                 ref={inputRef}
                 placeholder={t('modals.addChannel.placeholder')}
                 aria-label={t('modals.addChannel.label')}
-                style={{ minWidth: 0 }}
               />
               {formik.touched.name && formik.errors.name && (
                 <div className="invalid-feedback">{formik.errors.name}</div>
               )}
             </div>
+
             <div className="modal-footer">
               <button
                 type="submit"
@@ -147,7 +128,7 @@ const AddChannelModal = ({ onClose, onChannelCreated }) => {
         </div>
       </div>
     </div>,
-    document.body,
+    document.body
   )
 }
 

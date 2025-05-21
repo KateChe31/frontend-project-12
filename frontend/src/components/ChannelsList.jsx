@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   setActiveChannel,
@@ -8,77 +8,34 @@ import {
 } from '../features/chatSlice'
 import DeleteChannelModal from './DeleteChannelModal'
 import RenameChannelModal from './RenameChannelModal'
-import axios from 'axios'
 import { useTranslation } from 'react-i18next'
+
+import { deleteChannelRequest, renameChannelRequest } from '../api/chatApi'
 
 const ChannelsList = () => {
   const { t } = useTranslation()
-
-  const channels = useSelector(state => state.chat.channels)
-  const activeChannelId = useSelector(state => state.chat.activeChannelId)
+  const channels = useSelector((state) => state.chat.channels)
+  const activeChannelId = useSelector((state) => state.chat.activeChannelId)
   const dispatch = useDispatch()
 
-  const [openMenuId, setOpenMenuId] = useState(null)
   const [deleteModalChannel, setDeleteModalChannel] = useState(null)
   const [renameModalChannel, setRenameModalChannel] = useState(null)
-
   const [isDeleting, setIsDeleting] = useState(false)
   const [isRenaming, setIsRenaming] = useState(false)
 
-  const menuRef = useRef(null)
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        openMenuId !== null
-        && menuRef.current
-        && !menuRef.current.contains(event.target)
-        && !event.target.closest(`button[aria-label="${t('channelsList.channelManagement')}"]`)
-      ) {
-        setOpenMenuId(null)
-      }
-    }
-
-    document.addEventListener('click', handleClickOutside)
-    return () => document.removeEventListener('click', handleClickOutside)
-  }, [openMenuId, t])
-
-  const handleToggleMenu = (e, channelId) => {
-    e.stopPropagation()
-    setOpenMenuId(openMenuId === channelId ? null : channelId)
-  }
-
-  const handleDeleteClick = (e, channel) => {
-    e.stopPropagation()
-    setOpenMenuId(null)
-    setDeleteModalChannel(channel)
-  }
-
-  const handleRenameClick = (e, channel) => {
-    e.stopPropagation()
-    setOpenMenuId(null)
-    setRenameModalChannel(channel)
-  }
+  const isBusy = isDeleting || isRenaming
 
   const handleRemoveConfirmed = async () => {
     if (!deleteModalChannel) return
 
     setIsDeleting(true)
-    const channelIdToDelete = deleteModalChannel.id
-    const token = sessionStorage.getItem('token')
-
     try {
-      await axios.delete(`/api/v1/channels/${channelIdToDelete}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-
-      dispatch(removeChannel({ id: channelIdToDelete }))
-      dispatch(removeMessagesByChannel({ channelId: channelIdToDelete }))
-    }
-    catch (err) {
+      await deleteChannelRequest(deleteModalChannel.id)
+      dispatch(removeChannel({ id: deleteModalChannel.id }))
+      dispatch(removeMessagesByChannel({ channelId: deleteModalChannel.id }))
+    } catch (err) {
       console.error('Ошибка при удалении канала:', err)
-    }
-    finally {
+    } finally {
       setIsDeleting(false)
       setDeleteModalChannel(null)
     }
@@ -88,29 +45,16 @@ const ChannelsList = () => {
     if (!renameModalChannel) return
 
     setIsRenaming(true)
-    const token = sessionStorage.getItem('token')
-
     try {
-      await axios.patch(
-        `/api/v1/channels/${renameModalChannel.id}`,
-        { name: newName },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      )
-
+      await renameChannelRequest(renameModalChannel.id, newName)
       dispatch(renameChannel({ id: renameModalChannel.id, name: newName }))
-    }
-    catch (err) {
+    } catch (err) {
       console.error('Ошибка при переименовании канала:', err)
-    }
-    finally {
+    } finally {
       setIsRenaming(false)
       setRenameModalChannel(null)
     }
   }
-
-  const isBusy = isDeleting || isRenaming
 
   return (
     <>
@@ -133,45 +77,40 @@ const ChannelsList = () => {
                 </button>
 
                 {isRemovable && (
-                  <div className="position-relative ms-2">
+                  <div className="dropdown ms-2">
                     <button
+                      className="btn btn-sm btn-outline-secondary dropdown-toggle"
                       type="button"
-                      className="btn btn-sm btn-outline-secondary"
-                      onClick={e => handleToggleMenu(e, channel.id)}
+                      id={`dropdown-${channel.id}`}
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
                       disabled={isBusy}
+                      aria-label={t('channelsList.channelManagement')}
                     >
-                      ▼
-                      <span className="visually-hidden">{t('channelsList.channelManagement')}</span>
                     </button>
-
-                    {openMenuId === channel.id && (
-                      <ul
-                        ref={menuRef}
-                        className="list-group position-absolute shadow"
-                        style={{
-                          top: '100%',
-                          right: 0,
-                          zIndex: 1050,
-                          minWidth: '140px',
-                          backgroundColor: 'white',
-                        }}
-                      >
-                        <li
-                          className="list-group-item list-group-item-action text-danger"
-                          style={{ cursor: isBusy ? 'not-allowed' : 'pointer' }}
-                          onClick={e => !isBusy && handleDeleteClick(e, channel)}
+                    <ul
+                      className="dropdown-menu dropdown-menu-start"
+                      aria-labelledby={`dropdown-${channel.id}`}
+                    >
+                      <li>
+                        <button
+                          className="dropdown-item text-danger"
+                          type="button"
+                          onClick={() => !isBusy && setDeleteModalChannel(channel)}
                         >
                           {t('channelsList.delete')}
-                        </li>
-                        <li
-                          className="list-group-item list-group-item-action"
-                          style={{ cursor: isBusy ? 'not-allowed' : 'pointer' }}
-                          onClick={e => !isBusy && handleRenameClick(e, channel)}
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          type="button"
+                          onClick={() => !isBusy && setRenameModalChannel(channel)}
                         >
                           {t('channelsList.rename')}
-                        </li>
-                      </ul>
-                    )}
+                        </button>
+                      </li>
+                    </ul>
                   </div>
                 )}
               </div>
@@ -192,7 +131,7 @@ const ChannelsList = () => {
       {renameModalChannel && (
         <RenameChannelModal
           currentName={renameModalChannel.name}
-          existingNames={channels.map(ch => ch.name)}
+          existingNames={channels.map((ch) => ch.name)}
           onClose={() => setRenameModalChannel(null)}
           onRename={handleRenameConfirmed}
           isLoading={isRenaming}

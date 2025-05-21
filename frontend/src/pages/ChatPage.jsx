@@ -2,14 +2,15 @@ import { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import {
-  fetchChatData,
   setActiveChannel,
   addMessage,
   addChannel,
   removeChannel,
   renameChannel,
+  fetchChatData,
 } from '../features/chatSlice'
-import axios from 'axios'
+import { sendMessageRequest } from '../api/chatApi'
+
 import { createSocket } from '../socket'
 import AddChannelModal from '../components/AddChannelModal'
 import ChannelsList from '../components/ChannelsList'
@@ -33,7 +34,6 @@ const ChatPage = () => {
   const [isConnected, setIsConnected] = useState(false)
   const [showAddChannel, setShowAddChannel] = useState(false)
   const [isSending, setIsSending] = useState(false)
-
   const [createdChannelId, setCreatedChannelId] = useState(null)
 
   const messageListRef = useRef(null)
@@ -41,7 +41,6 @@ const ChatPage = () => {
   const socketRef = useRef(null)
 
   const user = JSON.parse(sessionStorage.getItem('user'))
-  const token = sessionStorage.getItem('token')
   const currentUsername = user?.username || 'unknown'
 
   useEffect(() => {
@@ -63,16 +62,17 @@ const ChatPage = () => {
     const tryFocus = () => {
       if (status === 'succeeded' && activeChannelId && inputRef.current && !inputRef.current.disabled) {
         inputRef.current.focus()
-      }
-      else {
+      } else {
         setTimeout(tryFocus, 100)
       }
     }
-
     tryFocus()
   }, [status, activeChannelId, isConnected, isSending])
 
   useEffect(() => {
+    const token = sessionStorage.getItem('token')
+    if (!token) return
+
     const socket = createSocket(token, currentUsername)
     socketRef.current = socket
 
@@ -98,14 +98,12 @@ const ChatPage = () => {
 
     socket.on('removeChannel', ({ id }) => {
       dispatch(removeChannel({ id }))
-
       if (id === activeChannelId) {
         const generalChannel = channels.find(ch => ch.name === DEFAULT_CHANNEL_NAME)
         if (generalChannel) {
           dispatch(setActiveChannel(generalChannel.id))
         }
       }
-
       toast.success(t('channelDeleted'))
     })
 
@@ -121,7 +119,7 @@ const ChatPage = () => {
     return () => {
       socket.disconnect()
     }
-  }, [dispatch, token, currentUsername, activeChannelId, channels, t])
+  }, [dispatch, currentUsername, activeChannelId, channels, t])
 
   useEffect(() => {
     if (messageListRef.current) {
@@ -144,20 +142,19 @@ const ChatPage = () => {
 
     try {
       setIsSending(true)
-      await axios.post('/api/v1/messages', messagePayload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      await sendMessageRequest(messagePayload)
       setNewMessage('')
       inputRef.current?.focus()
-    }
-    catch (err) {
+    } catch (err) {
+      toast.error(t('sendMessageError'))
       console.error('Ошибка отправки сообщения:', err)
-    }
-    finally {
+    } finally {
       setIsSending(false)
     }
+  }
+
+  if (status === 'loading') {
+    return <p className="text-center mt-5">{t('loading')}</p>
   }
 
   if (error) {
@@ -170,10 +167,10 @@ const ChatPage = () => {
   return (
     <div className="d-flex flex-column vh-100">
       <Header />
-      <div className="d-flex flex-grow-1" style={{ minHeight: 0 }}>
-        <aside className="bg-light border-end p-3" style={{ width: '300px', overflowY: 'auto' }}>
+      <div className="d-flex flex-grow-1 overflow-hidden">
+        <aside className="bg-light border-end p-3 overflow-auto" style={{ width: '300px' }}>
           <div className="d-flex justify-content-between align-items-center mb-2">
-            <h5>{t('channels')}</h5>
+            <h5 className="mb-0">{t('channels')}</h5>
             <button
               className="btn btn-sm btn-outline-primary"
               onClick={() => setShowAddChannel(true)}
@@ -186,29 +183,26 @@ const ChatPage = () => {
           <ChannelsList />
         </aside>
 
-        <main className="flex-grow-1 p-3 d-flex flex-column" style={{ overflow: 'hidden' }}>
-          <h5 className="text-start text-truncate" title={activeChannel?.name || ''}>
+        <main className="d-flex flex-column flex-grow-1 p-3 overflow-hidden">
+          <h5 className="text-start text-truncate mb-3" title={activeChannel?.name || ''}>
             {t('channelNamePrefix', { channelName: activeChannel?.name || '...' })}
           </h5>
 
           <div
             ref={messageListRef}
             className="border rounded p-3 mb-3 flex-grow-1 overflow-auto text-start"
-            style={{ whiteSpace: 'pre-wrap' }}
           >
-            {activeMessages.map(msg => (
+              {activeMessages.map(msg => (
               <div key={msg.id} className="mb-2">
-                <strong>{msg.username}</strong>
-                :
-                {msg.body}
+                <strong>{msg.username}</strong>: {msg.body}
               </div>
-            ))}
+              ))}
           </div>
 
-          <form onSubmit={handleSend} className="d-flex gap-2">
+          <form onSubmit={handleSend} className="d-flex">
             <input
               type="text"
-              className="form-control"
+              className="form-control me-2"
               placeholder={t('messagePlaceholder')}
               aria-label={t('messageForm.newMessage')}
               value={newMessage}
@@ -223,7 +217,7 @@ const ChatPage = () => {
               disabled={!newMessage.trim() || !isConnected || isSending}
               aria-label={t('sendMessage')}
             >
-              <i className="bi bi-arrow-right"></i>
+              <i className="bi bi-send"></i>
             </button>
           </form>
         </main>
@@ -232,9 +226,7 @@ const ChatPage = () => {
       {showAddChannel && (
         <AddChannelModal
           onClose={() => setShowAddChannel(false)}
-          onChannelCreated={(id) => {
-            setCreatedChannelId(id)
-          }}
+          onChannelCreated={setCreatedChannelId}
         />
       )}
     </div>

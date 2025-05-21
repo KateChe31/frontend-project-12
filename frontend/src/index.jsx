@@ -9,7 +9,7 @@ import store from './app/store'
 import App from './App.jsx'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
-import './index.css'
+
 import './i18n'
 
 import leoProfanity from 'leo-profanity'

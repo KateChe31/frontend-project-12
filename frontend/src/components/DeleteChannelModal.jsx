@@ -19,28 +19,25 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
     try {
       await onDelete()
       onClose()
-    }
-    catch {
+    } catch {
       console.error(t('modals.deleteChannel.deleteFailed', 'Ошибка при удалении канала'))
-    }
-    finally {
+    } finally {
       setIsSubmitting(false)
     }
   }
 
   return ReactDOM.createPortal(
     <div
-      className="modal fade show d-block"
+      className="modal fade show d-block bg-dark bg-opacity-50"
       tabIndex="-1"
       role="dialog"
       aria-modal="true"
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       onClick={onClose}
     >
       <div
         className="modal-dialog modal-dialog-centered"
         role="document"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <form className="modal-content" onSubmit={handleSubmit}>
           <div className="modal-header">
@@ -53,10 +50,7 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
               disabled={isSubmitting}
             />
           </div>
-          <div
-            className="modal-body"
-            style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
-          >
+          <div className="modal-body text-break">
             <p>{t('modals.deleteChannel.confirm')}</p>
           </div>
           <div className="modal-footer">
@@ -80,7 +74,7 @@ const DeleteChannelModal = ({ onClose, onDelete }) => {
         </form>
       </div>
     </div>,
-    document.body,
+    document.body
   )
 }
 

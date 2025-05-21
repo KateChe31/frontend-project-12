@@ -24,27 +24,24 @@ const Header = () => {
 
   return (
     <header className="py-3 px-4 border-bottom">
-      <div className="d-flex align-items-center">
+      <div className="d-flex align-items-center justify-content-between">
         <Link
           to={targetPath}
           className="text-decoration-none fs-4 fw-bold text-primary"
           onClick={handleHexletChatClick}
-          style={{ flexGrow: 0 }}
         >
           {t('header.appName')}
         </Link>
 
-        <div style={{ marginLeft: 'auto' }}>
-          {token && (
-            <button
-              type="button"
-              className="btn btn-outline-secondary btn-sm"
-              onClick={handleLogout}
-            >
-              {t('header.logout')}
-            </button>
-          )}
-        </div>
+        {token && (
+          <button
+            type="button"
+            className="btn btn-outline-secondary btn-sm"
+            onClick={handleLogout}
+          >
+            {t('header.logout')}
+          </button>
+        )}
       </div>
     </header>
   )

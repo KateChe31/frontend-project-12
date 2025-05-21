@@ -1,31 +1,16 @@
+// src/features/chatSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
+import { fetchChatDataRequest } from '../api/chatApi'
 
 export const fetchChatData = createAsyncThunk(
   'chat/fetchChatData',
   async (_, { rejectWithValue }) => {
     try {
-      const token = sessionStorage.getItem('token')
-      if (!token) throw new Error('Authorization required')
-
-      const [channelsRes, messagesRes] = await Promise.all([
-        axios.get('/api/v1/channels', {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get('/api/v1/messages', {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-      ])
-
-      return {
-        channels: channelsRes.data,
-        messages: messagesRes.data,
-      }
-    }
-    catch (err) {
+      return await fetchChatDataRequest()
+    } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message)
     }
-  },
+  }
 )
 
 const addUsernameToMessage = (msg) => {
